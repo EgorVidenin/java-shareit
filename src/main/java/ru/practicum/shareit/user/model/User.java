@@ -1,10 +1,9 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.user.model;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.user.model.User;
 
 /**
  * TODO Sprint add-controllers.
@@ -12,11 +11,8 @@ import ru.practicum.shareit.user.model.User;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Accessors(chain = true)
 @Data
-public class Item {
-    long id;
+public class User {
+    Long id;
     String name;
-    String description;
-    Boolean available;
-    User owner;
-    String request;
+    String email;
 }
