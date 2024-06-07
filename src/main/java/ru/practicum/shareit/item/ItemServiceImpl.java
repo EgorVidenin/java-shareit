@@ -11,6 +11,7 @@ import ru.practicum.shareit.user.InMemoryUserRepository;
 import ru.practicum.shareit.constants.Constants;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,7 +26,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(long userId, ItemDto itemDto) {
-        if (userRepository.getById(userId) == null) {
+        if (!Objects.nonNull(userRepository.getById(userId))) {
             log.info("Товар с неправильным идентификатором: {}", userId);
             throw new NotFoundException(Constants.MESSAGE_BAD_OWNER_ID + userId);
         }
