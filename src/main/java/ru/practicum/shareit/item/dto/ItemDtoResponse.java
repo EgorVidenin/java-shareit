@@ -20,8 +20,10 @@ public class ItemDtoResponse {
     @AllArgsConstructor
     @Data
     public static class BookingDto {
+
         @NotNull
         private Long id;
+
         @NotNull
         private Long bookerId;
     }

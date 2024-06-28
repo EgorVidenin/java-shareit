@@ -22,21 +22,28 @@ import java.util.List;
 @Table(name = "items")
 @Data
 public class Item {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
     @Column(nullable = false, unique = true)
     private String name;
+
     @Column(nullable = false)
     private String description;
+
     @Column(nullable = false)
     private Boolean available;
+
     @Transient
     private List<Comment> comments;
+
     @ManyToOne
     @JoinColumn(name = "request_id")
     private ItemRequest request;
