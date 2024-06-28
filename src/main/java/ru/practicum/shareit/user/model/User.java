@@ -1,18 +1,30 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * TODO Sprint add-controllers.
  */
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Accessors(chain = true)
+@Entity
+@Table(name = "users")
 @Data
 public class User {
-    Long id;
-    String name;
-    String email;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false, unique = true)
+    private String email;
 }

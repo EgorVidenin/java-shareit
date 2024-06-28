@@ -1,8 +1,6 @@
 package ru.practicum.shareit.exception;
 
-import java.util.NoSuchElementException;
-
-public class NotFoundException extends NoSuchElementException {
+public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {
         super(message);
     }

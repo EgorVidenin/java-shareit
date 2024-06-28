@@ -1,25 +1,17 @@
 package ru.practicum.shareit.constants;
 
-
 public class Constants {
-    public static final String X_SHARER_USER_ID = "X-Sharer-User-Id";
-    public static final String MESSAGE_FOR_DUPLICATE_EMAIL = "This Email is already registered: ";
-    public static final String MESSAGE_BAD_OWNER_ID = "Wrong owner ID: ";
+    public static final String HEADER_USER_ID = "X-Sharer-User-Id";
+    public static final String USER_NOT_FOUND = "User is not found";
+    public static final String ITEM_NOT_FOUND = "Item is not found";
+    public static final String BOOKING_NOT_FOUND = "Booking is not found";
+    public static final String USER_NOT_OWNER = "User is not owner of Item";
+    public static final String NO_COMMENT = "User can't comment this Item";
+    public static final String APPROVED_ITEM = "Item has already been approved";
+    public static final String USER_CAN_NOT_GET_ITEM = "User is not owner or booker";
+    public static final String OWNER_CAN_NOT_BOOK = "Owner can't to book his Item";
+    public static final String NOT_AVAILABLE_ITEM = "Item is not available";
+    public static final String WRONG_BOOKING_DATE = "Wrong booking date";
+    public static final String EMAIL_BUSY = "This email is busy";
+    public static final String WRONG_STATE = "Invalid search status";
 }
-
-// не разобрался
-
-//import org.springframework.beans.factory.annotation.Value;
-//        import org.springframework.stereotype.Component;
-//
-//@Component
-//public class Constants {
-//    @Value("${shareit.constants.x-sharer-user-id}")
-//    public static String X_SHARER_USER_ID;
-//
-//    @Value("${shareit.constants.message-for-duplicate-email}")
-//    public static String MESSAGE_FOR_DUPLICATE_EMAIL;
-//
-//    @Value("${shareit.constants.message-bad-owner-id}")
-//    public static String MESSAGE_BAD_OWNER_ID;
-//}
