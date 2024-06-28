@@ -2,12 +2,14 @@ package ru.practicum.shareit.booking.service;
 
 import ru.practicum.shareit.booking.model.State;
 
+import java.util.Objects;
+
 
 public abstract class EntryAccessor {
     private EntryAccessor next;
 
     protected void checkNext(Long bookerId, State state) {
-        if (next != null) {
+        if (Objects.nonNull(next)) {
             next.check(bookerId, state);
         }
     }
