@@ -1,20 +1,18 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.user.model.NewUser;
+import ru.practicum.shareit.user.model.UpdateUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Accessors(chain = true)
 public class UserDto {
-    Long id;
-    String name;
-    @NotNull
-    @Email
-    String email;
+    private Long id;
+    @NotNull(groups = NewUser.class)
+    private String name;
+    @Email(groups = {NewUser.class, UpdateUser.class})
+    @NotNull(groups = NewUser.class)
+    private String email;
 }
