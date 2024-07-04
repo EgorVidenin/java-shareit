@@ -1,24 +1,34 @@
 package ru.practicum.shareit.request.model;
 
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 /**
  * TODO Sprint add-item-requests.
  */
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Accessors(chain = true)
+
+@Entity
+@Table(name = "requests")
 @Data
 public class ItemRequest {
-    long id;
-    String description;
-    User requestor;
-    LocalDateTime created;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
+    private Long id;
+
+    @Column(nullable = false)
+    private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "requester_id")
+    private User requester;
+
+    @Column(name = "create_date")
+    private final LocalDate created = LocalDate.now();
 }
