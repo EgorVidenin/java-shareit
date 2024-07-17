@@ -1,19 +1,11 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
-import ru.practicum.shareit.request.model.ItemRequest;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import ru.practicum.shareit.user.model.User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import java.util.List;
+import javax.persistence.*;
 
 /**
  * TODO Sprint add-controllers.
@@ -21,11 +13,12 @@ import java.util.List;
 @Entity
 @Table(name = "items")
 @Data
+@Accessors(chain = true)
+@EqualsAndHashCode
 public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
 
     @ManyToOne
@@ -41,10 +34,6 @@ public class Item {
     @Column(nullable = false)
     private Boolean available;
 
-    @Transient
-    private List<Comment> comments;
-
-    @ManyToOne
-    @JoinColumn(name = "request_id")
-    private ItemRequest request;
+    @Column(name = "request_id")
+    private Long requestId;
 }

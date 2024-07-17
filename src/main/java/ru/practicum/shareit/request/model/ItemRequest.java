@@ -1,25 +1,24 @@
 package ru.practicum.shareit.request.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * TODO Sprint add-item-requests.
  */
 
-
 @Entity
 @Table(name = "requests")
 @Data
+@Accessors(chain = true)
 public class ItemRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     private Long id;
 
     @Column(nullable = false)
@@ -30,5 +29,5 @@ public class ItemRequest {
     private User requester;
 
     @Column(name = "create_date")
-    private final LocalDate created = LocalDate.now();
+    private LocalDateTime created;
 }

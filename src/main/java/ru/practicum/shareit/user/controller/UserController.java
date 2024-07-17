@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +29,7 @@ public class UserController {
     @PostMapping
     public UserDto create(@Validated(NewUser.class)
                           @RequestBody UserDto userDto) {
-        log.info("Запрос на добавление User");
+        log.info("Post-запрос на добавление User");
         return userService.create(userDto);
     }
 
@@ -36,25 +37,25 @@ public class UserController {
     public UserDto update(@Validated(UpdateUser.class)
                           @RequestBody UserDto userDto,
                           @PathVariable Long id) {
-        log.info("Запрос на обновление User с ID: {}", id);
+        log.info("Patch-запрос на обновление User с ID = {}", id);
         return userService.update(id, userDto);
     }
 
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable Long id) {
-        log.info("GET-запрос User c ID: {}", id);
+        log.info("Поступил GET-запрос на получение User c ID = {}", id);
         return userService.getUserById(id);
     }
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        log.info("GET-запрос Users ");
+        log.info("GET-запрос на получение всех Users ");
         return userService.getAllUsers();
     }
 
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable Long id) {
-        log.info("DELETE-запрос User с id: {}", id);
+        log.info("DELETE-запрос на удаление User с id = {}", id);
         userService.deleteUserById(id);
     }
 }

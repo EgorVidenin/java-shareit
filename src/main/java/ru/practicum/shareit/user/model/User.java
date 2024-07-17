@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "users")
 @Data
+@Accessors(chain = true)
 public class User {
 
     @Id
