@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,14 +40,14 @@ public class ItemController {
     public ItemDto update(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
                           @RequestBody ItemDto itemDto,
                           @PathVariable Long itemId) {
-        log.info("Запрос от User c ID: {} на обновление Item с ID: {}", userId, itemId);
+        log.info("Patch-запрос от User c ID = {} на обновление Item с ID = {}", userId, itemId);
         return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
     public ItemDtoResponse getItemById(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
                                        @PathVariable Long itemId) {
-        log.info("GET-запрос от User c ID: {} на получение Item с ID: {}", userId, itemId);
+        log.info("GET-запрос от User c ID = {} на получение Item с ID = {}", userId, itemId);
         return itemService.getItemById(userId, itemId);
     }
 

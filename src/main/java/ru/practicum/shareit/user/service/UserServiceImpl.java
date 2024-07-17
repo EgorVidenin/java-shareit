@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.constants.Constants;
-import ru.practicum.shareit.exception.DublicateEmailException;
+import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
     private void checkDuplicateEmail(String email) {
         if (emails.contains(email)) {
-            throw new DublicateEmailException(Constants.EMAIL_BUSY);
+            throw new DuplicateEmailException(Constants.EMAIL_BUSY);
         }
     }
 }

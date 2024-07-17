@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.constants.Constants;
-import ru.practicum.shareit.exception.DublicateEmailException;
+import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -18,16 +18,10 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -107,8 +101,8 @@ class UserServiceImplTest {
 
             userService.update(1L, userDto1Id);
 
-            DublicateEmailException exception =
-                    assertThrows(DublicateEmailException.class, () -> userService.update(2L, userDto2Id));
+            DuplicateEmailException exception =
+                    assertThrows(DuplicateEmailException.class, () -> userService.update(2L, userDto2Id));
             assertEquals(exception.getMessage(), Constants.EMAIL_BUSY);
 
             verify(userRepository, times(2)).findById(anyLong());
