@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
@@ -91,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
         userAvailableChecker.bind(paramsFromSizeChecker);
         userAvailableChecker.check(inputRequest);
         userAvailableChecker.checkNext(inputRequest);
-        Pageable page = PageRequest.of(from / size, size);
+        Pageable page = PageRequest.of(from / size, size, Sort.by("start").descending());
         switch (state) {
             case ALL: {
                 return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, page));
