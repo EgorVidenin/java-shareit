@@ -19,6 +19,8 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.constants.Constants;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -51,13 +53,14 @@ public class BookingController {
     }
 
     @GetMapping
-    List<BookingDtoResponse> getAllBookingsByUserId(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                                    @RequestParam(defaultValue = "ALL", required = false) State state,
-                                                    @RequestParam(defaultValue = "0", required = false) Integer from,
-                                                    @RequestParam(defaultValue = "10", required = false) Integer size) {
+    List<BookingDtoResponse> getAllBookingsByUserId(@Positive @RequestHeader(Constants.HEADER_USER_ID) Long userId,
+                                                    @Positive @RequestParam(defaultValue = "ALL", required = false) State state,
+                                                    @Positive @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                    @Positive @PositiveOrZero @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("Get-запрос getAllBookingsByUserId");
         return bookingService.getAllBookingsByUserId(userId, state, from, size);
     }
+
 
     @GetMapping("/owner")
     List<BookingDtoResponse> getAllBookingsByOwnerId(@RequestHeader(Constants.HEADER_USER_ID) Long ownerId,
