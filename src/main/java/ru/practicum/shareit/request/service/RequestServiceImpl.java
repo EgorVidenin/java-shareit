@@ -45,7 +45,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<ItemRequestDtoResponse> getAllRequests(Long userId, Integer from, Integer size) {
-        if (from < 0 || size < 0) {
+        if (from < 0 || size <= 0) {
             throw new BadRequestException(Constants.NEGATIVE_VALUE);
         }
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException(Constants.USER_NOT_FOUND));
