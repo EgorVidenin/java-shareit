@@ -14,3 +14,4 @@ public class CommentDto {
     @Length(max = 255)
     private String text;
 }
+
