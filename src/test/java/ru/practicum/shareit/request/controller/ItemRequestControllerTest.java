@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import ru.practicum.shareit.constants.Constants;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.service.RequestService;
@@ -56,15 +56,15 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.description", is(itemRequestDtoResponse.getDescription())))
                 .andExpect(jsonPath("$.created", is(itemRequestDtoResponse.getCreated().toString())))
                 .andExpect(jsonPath("$..items[*].id", is((itemRequestDtoResponse.getItems().stream()
-                        .map(Item::getId).collect(Collectors.toList())))))
+                        .map(ItemDto::getId).collect(Collectors.toList())))))
                 .andExpect(jsonPath("$..items[*].name", is((itemRequestDtoResponse.getItems().stream()
-                        .map(Item::getName).collect(Collectors.toList())))));
+                        .map(ItemDto::getName).collect(Collectors.toList())))));
     }
 
     @Test
     void saveRequestWhenError() throws Exception {
         ItemRequestDto itemRequestDto = generator.nextObject(ItemRequestDto.class);
-        itemRequestDto.setDescription(null);
+        itemRequestDto.setDescription("");
 
         mvc.perform(post("/requests")
                         .content(mapper.writeValueAsString(itemRequestDto))
@@ -74,7 +74,7 @@ class ItemRequestControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.error").value(containsString("must not be null")));
+                .andExpect(jsonPath("$.error").value(containsString("must not be blank")));
     }
 
     @Test
@@ -93,9 +93,9 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.[0]['created']", is((itemRequestDtoResponseList.get(0).getCreated().toString()))))
                 .andExpect(jsonPath("$.[0]['description']", is((itemRequestDtoResponseList.get(0).getDescription()))))
                 .andExpect(jsonPath("$..items[*].id", is((itemRequestDtoResponseList.get(0).getItems().stream()
-                        .map(Item::getId).collect(Collectors.toList())))))
+                        .map(ItemDto::getId).collect(Collectors.toList())))))
                 .andExpect(jsonPath("$..items[*].name", is((itemRequestDtoResponseList.get(0).getItems().stream()
-                        .map(Item::getName).collect(Collectors.toList())))));
+                        .map(ItemDto::getName).collect(Collectors.toList())))));
     }
 
     @Test
@@ -114,9 +114,9 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.[0]['created']", is((itemRequestDtoResponseList.get(0).getCreated().toString()))))
                 .andExpect(jsonPath("$.[0]['description']", is((itemRequestDtoResponseList.get(0).getDescription()))))
                 .andExpect(jsonPath("$..items[*].id", is((itemRequestDtoResponseList.get(0).getItems().stream()
-                        .map(Item::getId).collect(Collectors.toList())))))
+                        .map(ItemDto::getId).collect(Collectors.toList())))))
                 .andExpect(jsonPath("$..items[*].name", is((itemRequestDtoResponseList.get(0).getItems().stream()
-                        .map(Item::getName).collect(Collectors.toList())))));
+                        .map(ItemDto::getName).collect(Collectors.toList())))));
     }
 
     @Test
@@ -134,8 +134,8 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.description", is(itemRequestDtoResponse.getDescription())))
                 .andExpect(jsonPath("$.created", is(itemRequestDtoResponse.getCreated().toString())))
                 .andExpect(jsonPath("$..items[*].id", is((itemRequestDtoResponse.getItems().stream()
-                        .map(Item::getId).collect(Collectors.toList())))))
+                        .map(ItemDto::getId).collect(Collectors.toList())))))
                 .andExpect(jsonPath("$..items[*].name", is((itemRequestDtoResponse.getItems().stream()
-                        .map(Item::getName).collect(Collectors.toList())))));
+                        .map(ItemDto::getName).collect(Collectors.toList())))));
     }
 }

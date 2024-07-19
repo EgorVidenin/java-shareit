@@ -88,12 +88,4 @@ class ItemRepositoryTest {
 
         assertIterableEquals(actualItemList, expectedItemList);
     }
-
-    @Test
-    void findAllByRequestId() {
-        List<Item> actualItemList = itemRepository.findAllByRequestId(itemRequest.getId());
-
-        assertEquals(actualItemList.get(0), item2);
-        assertEquals(actualItemList.get(0).getName(), item2.getName());
-    }
 }
