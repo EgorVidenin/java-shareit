@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import ru.practicum.shareit.user.model.User;
 
@@ -11,7 +10,6 @@ import javax.persistence.*;
 @Table(name = "items")
 @Data
 @Accessors(chain = true)
-@EqualsAndHashCode
 public class Item {
 
     @Id
