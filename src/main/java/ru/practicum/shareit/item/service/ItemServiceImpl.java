@@ -78,11 +78,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItems(Long userId, String text, Integer from, Integer size) {
-        Pageable page = PageRequest.of(from / size, size);
         if (text.isBlank()) {
             log.info("Параметр 'text' пустой. Получен пустой список Item");
             return Collections.emptyList();
         }
+        Pageable page = PageRequest.of(from / size, size);
         return itemRepository.findByNameIgnoreCaseContainingAndAvailableTrueOrDescriptionIgnoreCaseContainingAndAvailableTrue(text, text, page).stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
