@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.service.ItemMapper;
+import ru.practicum.shareit.item.service.ItemMapperImpl;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -18,7 +21,10 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +33,7 @@ public class RequestServiceImpl implements RequestService {
     private final ItemRequestMapper itemRequestMapper;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    ItemMapper itemMapper = new ItemMapperImpl();
 
     @Override
     public ItemRequestDtoResponse saveRequest(Long userId, ItemRequestDto itemRequestDto) {
@@ -65,26 +72,20 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private List<ItemRequestDtoResponse> setUpItemRequestDtoResponse(List<ItemRequest> itemRequests) {
+        List<Long> requestIds = itemRequests.stream()
+                .map(ItemRequest::getId)
+                .collect(Collectors.toList());
+
+        List<ItemDto> items = itemRepository.findByRequestIdIn(requestIds).stream().map(itemMapper::toItemDto).collect(Collectors.toList());
+
+        Map<Long, List<ItemDto>> itemsByRequest = items.stream()
+                .collect(Collectors.groupingBy(ItemDto::getRequestId, Collectors.toList()));
+
         List<ItemRequestDtoResponse> itemRequestDtoResponses = itemRequestMapper.toItemRequestDtoResponseList(itemRequests);
-        itemRequestDtoResponses.forEach(itemRequest -> itemRequest.setItems(itemRepository.findAllByRequestId(itemRequest.getId())));
+        itemRequestDtoResponses.forEach(itemRequestDtoResponse -> {
+            List<ItemDto> itemsForRequest = itemsByRequest.get(itemRequestDtoResponse.getId());
+            itemRequestDtoResponse.setItems(itemsForRequest != null ? itemsForRequest : Collections.emptyList());
+        });
         return itemRequestDtoResponses;
     }
-
-//    private List<ItemRequestDtoResponse> setUpItemRequestDtoResponse(List<ItemRequest> itemRequests) {
-//        List<Long> requestIds = itemRequests.stream()
-//                .map(ItemRequest::getId)
-//                .collect(Collectors.toList());
-//
-//        List<ItemDto> items = itemRepository.findByRequest_IdIn(requestIds);
-//
-//        Map<Long, List<ItemDto>> itemsByRequest = items.stream()
-//                .collect(Collectors.groupingBy(ItemDto::getRequestId, Collectors.toList()));
-//
-//        List<ItemRequestDtoResponse> itemRequestDtoResponses = itemRequestMapper.toItemRequestDtoResponseList(itemRequests);
-//        itemRequestDtoResponses.forEach(itemRequestDtoResponse -> {
-//            List<ItemDto> itemsForRequest = itemsByRequest.get(itemRequestDtoResponse.getId());
-//            itemRequestDtoResponse.setItems(itemsForRequest != null ? itemsForRequest : Collections.emptyList());
-//        });
-//        return itemRequestDtoResponses;
-//    }
 }
