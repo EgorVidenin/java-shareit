@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
-@Setter
 @Getter
+@Setter
 @Accessors(chain = true)
 public class Comment {
 
