@@ -53,10 +53,10 @@ public class BookingController {
     }
 
     @GetMapping
-    List<BookingDtoResponse> getAllBookingsByUserId(@Positive @RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                                    @Positive @RequestParam(defaultValue = "ALL", required = false) State state,
-                                                    @Positive @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
-                                                    @Positive @PositiveOrZero @RequestParam(defaultValue = "10", required = false) Integer size) {
+    List<BookingDtoResponse> getAllBookingsByUserId(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
+                                                    @RequestParam(defaultValue = "ALL", required = false) State state,
+                                                    @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                    @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("Get-запрос getAllBookingsByUserId");
         return bookingService.getAllBookingsByUserId(userId, state, from, size);
     }
@@ -65,8 +65,8 @@ public class BookingController {
     @GetMapping("/owner")
     List<BookingDtoResponse> getAllBookingsByOwnerId(@RequestHeader(Constants.HEADER_USER_ID) Long ownerId,
                                                      @RequestParam(defaultValue = "ALL", required = false) State state,
-                                                     @RequestParam(defaultValue = "0", required = false) Integer from,
-                                                     @RequestParam(defaultValue = "10", required = false) Integer size) {
+                                                     @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                     @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("Get-запрос getAllBookingsByOwnerId");
         return bookingService.getAllBookingsByOwnerId(ownerId, state, from, size);
     }

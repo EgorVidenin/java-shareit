@@ -16,6 +16,8 @@ import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.service.RequestService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -40,8 +42,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDtoResponse> getAllRequests(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                                       @RequestParam(defaultValue = "0", required = false) Integer from,
-                                                       @RequestParam(defaultValue = "10", required = false) Integer size) {
+                                                       @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                       @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("Get-запрос getAllRequests");
         return requestService.getAllRequests(userId, from, size);
     }

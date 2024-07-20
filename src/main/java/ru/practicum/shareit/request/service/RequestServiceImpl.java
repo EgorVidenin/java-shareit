@@ -69,4 +69,22 @@ public class RequestServiceImpl implements RequestService {
         itemRequestDtoResponses.forEach(itemRequest -> itemRequest.setItems(itemRepository.findAllByRequestId(itemRequest.getId())));
         return itemRequestDtoResponses;
     }
+
+//    private List<ItemRequestDtoResponse> setUpItemRequestDtoResponse(List<ItemRequest> itemRequests) {
+//        List<Long> requestIds = itemRequests.stream()
+//                .map(ItemRequest::getId)
+//                .collect(Collectors.toList());
+//
+//        List<ItemDto> items = itemRepository.findByRequest_IdIn(requestIds);
+//
+//        Map<Long, List<ItemDto>> itemsByRequest = items.stream()
+//                .collect(Collectors.groupingBy(ItemDto::getRequestId, Collectors.toList()));
+//
+//        List<ItemRequestDtoResponse> itemRequestDtoResponses = itemRequestMapper.toItemRequestDtoResponseList(itemRequests);
+//        itemRequestDtoResponses.forEach(itemRequestDtoResponse -> {
+//            List<ItemDto> itemsForRequest = itemsByRequest.get(itemRequestDtoResponse.getId());
+//            itemRequestDtoResponse.setItems(itemsForRequest != null ? itemsForRequest : Collections.emptyList());
+//        });
+//        return itemRequestDtoResponses;
+//    }
 }
