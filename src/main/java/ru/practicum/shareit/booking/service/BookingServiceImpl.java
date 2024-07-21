@@ -117,43 +117,6 @@ public class BookingServiceImpl implements BookingService {
         return null;
     }
 
-//    @Override
-//    public List<BookingDtoResponse> getAllBookingsByOwnerId(Long bookerId, State state, Integer from, Integer size) {
-//        inputRequest.setBookerId(bookerId).setState(state).setFrom(from).setSize(size);
-//        userAvailableChecker.bind(paramsFromSizeChecker);
-//        userAvailableChecker.check(inputRequest);
-//        userAvailableChecker.checkNext(inputRequest);
-//        Pageable page = PageRequest.of(from / size, size);
-//        switch (state) {
-//            case ALL: {
-//                return bookingMapper.toBookingDtoResponseList(
-//                        bookingRepository.findAllByItemOwnerIdOrderByStartDesc(bookerId, page));
-//            }
-//            case WAITING: {
-//                return bookingMapper.toBookingDtoResponseList(
-//                        bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(bookerId, Status.WAITING, page));
-//            }
-//            case REJECTED: {
-//                return bookingMapper.toBookingDtoResponseList(
-//                        bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(bookerId, Status.REJECTED, page));
-//            }
-//            case CURRENT: {
-//                return bookingMapper.toBookingDtoResponseList(
-//                        bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(bookerId, LocalDateTime.now(), LocalDateTime.now(), page));
-//            }
-//            case FUTURE: {
-//                return bookingMapper.toBookingDtoResponseList(
-//                        bookingRepository.findALLByItemOwnerIdAndStartIsAfterOrderByStartDesc(bookerId, LocalDateTime.now(), page));
-//            }
-//            case PAST: {
-//                return bookingMapper.toBookingDtoResponseList(
-//                        bookingRepository.findALLByItemOwnerIdAndEndIsBeforeOrderByStartDesc(bookerId, LocalDateTime.now(), page));
-//            }
-//        }
-//        return null;
-//    }
-//}
-
     @Override
     public List<BookingDtoResponse> getAllBookingsByOwnerId(Long bookerId, State state, Integer from, Integer size) {
         inputRequest.setBookerId(bookerId).setState(state).setFrom(from).setSize(size);
