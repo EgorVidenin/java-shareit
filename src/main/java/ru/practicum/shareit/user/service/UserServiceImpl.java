@@ -1,10 +1,12 @@
 package ru.practicum.shareit.user.service;
 
+
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.constants.Constants;
-import ru.practicum.shareit.exception.DublicateEmailException;
+import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -19,16 +21,17 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Data
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final Set<String> emails = new HashSet<>();
+    private Set<String> emails = new HashSet<>();
 
     @Override
     public UserDto create(UserDto userDto) {
         emails.add(userDto.getEmail());
         User user = userRepository.save(userMapper.toUser(userDto));
-        log.info("User с id: {} добавлен", user.getId());
+        log.info("User с id = {} добавлен", user.getId());
         return userMapper.toUserDto(user);
     }
 
@@ -36,14 +39,14 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long id, UserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(Constants.USER_NOT_FOUND));
         if (userDto.getEmail() != null && !userDto.getEmail().equals(user.getEmail())) {
-            checkDublicateEmail(userDto.getEmail());
+            checkDuplicateEmail(userDto.getEmail());
             emails.remove(user.getEmail());
             emails.add(userDto.getEmail());
         }
         userMapper.updateUserFromUserDto(userDto, user);
-        userRepository.save(user);
-        log.info("User с id: {} обновлен", user.getId());
-        return userMapper.toUserDto(user);
+        User userResponse = userRepository.save(user);
+        log.info("User с id = {} обновлен", user.getId());
+        return userMapper.toUserDto(userResponse);
     }
 
     @Override
@@ -67,9 +70,9 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    private void checkDublicateEmail(String email) {
+    private void checkDuplicateEmail(String email) {
         if (emails.contains(email)) {
-            throw new DublicateEmailException(Constants.EMAIL_BUSY);
+            throw new DuplicateEmailException(Constants.EMAIL_BUSY);
         }
     }
 }

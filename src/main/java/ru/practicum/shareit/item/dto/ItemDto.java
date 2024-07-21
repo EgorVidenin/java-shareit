@@ -1,11 +1,13 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
+@Accessors(chain = true)
 public class ItemDto {
 
     private Long id;
@@ -18,4 +20,5 @@ public class ItemDto {
 
     @NotNull
     private Boolean available;
+    private Long requestId;
 }

@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -8,7 +10,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
-@Data
+@Getter
+@Setter
+@Accessors(chain = true)
 public class Comment {
 
     @Id

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,8 @@ import ru.practicum.shareit.item.dto.ItemDtoResponse;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -39,28 +42,32 @@ public class ItemController {
     public ItemDto update(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
                           @RequestBody ItemDto itemDto,
                           @PathVariable Long itemId) {
-        log.info("Запрос от User c ID: {} на обновление Item с ID: {}", userId, itemId);
+        log.info("Patch-запрос от User c ID = {} на обновление Item с ID = {}", userId, itemId);
         return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
     public ItemDtoResponse getItemById(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
                                        @PathVariable Long itemId) {
-        log.info("GET-запрос от User c ID: {} на получение Item с ID: {}", userId, itemId);
+        log.info("GET-запрос от User c ID = {} на получение Item с ID = {}", userId, itemId);
         return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDtoResponse> getAll(@RequestHeader(Constants.HEADER_USER_ID) Long userId) {
-        log.info("GET-запрос Item c ID: {}", userId);
-        return itemService.getAll(userId);
+    public List<ItemDtoResponse> getAll(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
+                                        @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                        @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
+        log.info("GET-запрос на получение всех Item Юзера c ID = {}", userId);
+        return itemService.getAll(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                     @RequestParam(required = false) String text) {
-        log.info("GET-запрос от User c ID: {} на поиск Item ", userId);
-        return itemService.searchItems(userId, text);
+                                     @RequestParam(required = false) String text,
+                                     @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                     @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
+        log.info("GET-запрос от User c ID = {} на поиск Item ", userId);
+        return itemService.searchItems(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
