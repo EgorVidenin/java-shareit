@@ -1,4 +1,4 @@
-package ru.practicum.gateway.error;
+package ru.practicum.gateway.exception;
 
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.gateway.constant.Constants;
+import ru.practicum.gateway.constants.Constants;
 
 
 @Slf4j
