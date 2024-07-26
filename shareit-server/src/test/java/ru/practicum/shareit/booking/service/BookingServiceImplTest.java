@@ -1,6 +1,10 @@
 package ru.practicum.shareit.booking.service;
 
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,19 +19,16 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.constants.Constants;
-import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.constant.Constants;
+import ru.practicum.shareit.error.BadRequestException;
+import ru.practicum.shareit.error.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -44,7 +45,6 @@ class BookingServiceImplTest {
     private final InputRequest inputRequest = new InputRequest();
 
     private final BookingMapper bookingMapper = new BookingMapperImpl();
-    private final ParamsFromSizeChecker paramsFromSizeChecker = new ParamsFromSizeChecker();
     private User booker;
     private BookingDtoRequest bookingDtoRequest;
     private User owner;
@@ -60,8 +60,7 @@ class BookingServiceImplTest {
                 userRepository,
                 itemRepository,
                 userAvailableChecker,
-                inputRequest,
-                paramsFromSizeChecker);
+                inputRequest);
 
         owner = new User()
                 .setId(1L)
@@ -105,24 +104,18 @@ class BookingServiceImplTest {
         }
 
         @Test
-        void saveBookingWhenItemDtoEqualNull() {
-            assertThrows(
-                    NullPointerException.class, () -> bookingService.save(booker.getId(), null));
-        }
-
-        @Test
         void saveBookingWhenUserNotFound() {
             when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
             NotFoundException exception = assertThrows(
                     NotFoundException.class, () -> bookingService.save(booker.getId(), bookingDtoRequest));
-            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
         }
 
         @Test
         void saveBookingWhenItemNotFound() {
             NotFoundException exception = assertThrows(
                     NotFoundException.class, () -> bookingService.save(booker.getId(), bookingDtoRequest));
-            assertEquals(exception.getMessage(), Constants.ITEM_NOT_FOUND);
+            Assertions.assertEquals(exception.getMessage(), Constants.ITEM_NOT_FOUND);
         }
 
         @Test
@@ -131,7 +124,7 @@ class BookingServiceImplTest {
 
             NotFoundException exception = assertThrows(
                     NotFoundException.class, () -> bookingService.save(owner.getId(), bookingDtoRequest));
-            assertEquals(exception.getMessage(), Constants.OWNER_CAN_NOT_BOOK);
+            Assertions.assertEquals(exception.getMessage(), Constants.OWNER_CAN_NOT_BOOK);
         }
 
         @Test
@@ -141,34 +134,7 @@ class BookingServiceImplTest {
 
             BadRequestException exception = assertThrows(
                     BadRequestException.class, () -> bookingService.save(booker.getId(), bookingDtoRequest));
-            assertEquals(exception.getMessage(), Constants.NOT_AVAILABLE_ITEM);
-        }
-
-        @Test
-        void saveBookingWhenEndIsBeforeStart() {
-            bookingDtoRequest.setEnd(LocalDateTime.now().plusHours(1));
-
-            BadRequestException exception = assertThrows(
-                    BadRequestException.class, () -> bookingService.save(booker.getId(), bookingDtoRequest));
-            assertEquals(exception.getMessage(), Constants.WRONG_BOOKING_DATE);
-        }
-
-        @Test
-        void saveBookingWhenEndIsEqualStart() {
-            bookingDtoRequest.setStart(LocalDateTime.of(2024, 7, 14, 13, 0));
-            bookingDtoRequest.setEnd(LocalDateTime.of(2024, 7, 14, 13, 0));
-            BadRequestException exception = assertThrows(
-                    BadRequestException.class, () -> bookingService.save(booker.getId(), bookingDtoRequest));
-            assertEquals(exception.getMessage(), Constants.WRONG_BOOKING_DATE);
-        }
-
-        @Test
-        void saveBookingWhenStartBeforeNow() {
-            bookingDtoRequest.setStart(LocalDateTime.now().minusSeconds(1));
-
-            BadRequestException exception = assertThrows(
-                    BadRequestException.class, () -> bookingService.save(booker.getId(), bookingDtoRequest));
-            assertEquals(exception.getMessage(), Constants.WRONG_BOOKING_DATE);
+            Assertions.assertEquals(exception.getMessage(), Constants.NOT_AVAILABLE_ITEM);
         }
     }
 
@@ -188,7 +154,7 @@ class BookingServiceImplTest {
         void getBookingByIdWhenBookingNotFound() {
             NotFoundException exception = assertThrows(
                     NotFoundException.class, () -> bookingService.getBookingById(booker.getId(), booking.getId()));
-            assertEquals(exception.getMessage(), Constants.BOOKING_NOT_FOUND);
+            Assertions.assertEquals(exception.getMessage(), Constants.BOOKING_NOT_FOUND);
         }
 
         @Test
@@ -197,7 +163,7 @@ class BookingServiceImplTest {
 
             NotFoundException exception = assertThrows(
                     NotFoundException.class, () -> bookingService.getBookingById(3L, booking.getId()));
-            assertEquals(exception.getMessage(), Constants.USER_CAN_NOT_GET_ITEM);
+            Assertions.assertEquals(exception.getMessage(), Constants.USER_CAN_NOT_GET_ITEM);
         }
     }
 
@@ -218,7 +184,7 @@ class BookingServiceImplTest {
 
             NotFoundException exception = assertThrows(
                     NotFoundException.class, () -> bookingService.approveBooking(booker.getId(), booking.getId(), true));
-            assertEquals(exception.getMessage(), Constants.USER_NOT_OWNER);
+            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_OWNER);
         }
 
         @Test
@@ -227,7 +193,7 @@ class BookingServiceImplTest {
             when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
             BadRequestException exception = assertThrows(
                     BadRequestException.class, () -> bookingService.approveBooking(owner.getId(), booking.getId(), true));
-            assertEquals(exception.getMessage(), Constants.APPROVED_ITEM);
+            Assertions.assertEquals(exception.getMessage(), Constants.APPROVED_ITEM);
         }
 
         @Test
@@ -245,7 +211,7 @@ class BookingServiceImplTest {
         @Test
         void getAllBookingsByUserId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerId(anyLong(), any(Pageable.class))).thenReturn(List.of(booking));
+            when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong(), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.ALL, 0, 2);
 
             groupAssertChecking(bookings.get(0), booking);
@@ -254,7 +220,7 @@ class BookingServiceImplTest {
         @Test
         void getAllFutureBookingsByUserId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndStartIsAfter(
+            when(bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.FUTURE, 0, 2);
 
@@ -266,7 +232,7 @@ class BookingServiceImplTest {
             booking.setStart(LocalDateTime.now().minusSeconds(2));
             booking.setEnd(LocalDateTime.now().minusSeconds(1));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndEndIsBefore(
+            when(bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.PAST, 0, 2);
 
@@ -278,7 +244,7 @@ class BookingServiceImplTest {
             booking.setStart(LocalDateTime.now().minusSeconds(1));
             booking.setEnd(LocalDateTime.now().plusSeconds(1));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(
+            when(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartAsc(
                     anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.CURRENT, 0, 2);
 
@@ -288,7 +254,7 @@ class BookingServiceImplTest {
         @Test
         void getAllWaitingBookingsByUserId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndStatus(
+            when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
                     anyLong(), any(Status.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.WAITING, 0, 2);
 
@@ -299,7 +265,7 @@ class BookingServiceImplTest {
         void getAllRejectedBookingsByUserId() {
             booking.setStatus(Status.REJECTED);
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndStatus(
+            when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
                     anyLong(), any(Status.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.REJECTED, 0, 2);
 
@@ -310,22 +276,7 @@ class BookingServiceImplTest {
         void getAllBookingsByUserIdWhenUserNotFound() {
             NotFoundException exception = assertThrows(
                     NotFoundException.class, () -> bookingService.getAllBookingsByUserId(booker.getId(), State.WAITING, 0, 2));
-            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
-        }
-
-        @Test
-        void getAllBookingsByUserIdWhenWrongState() {
-            IllegalArgumentException exception = assertThrows(
-                    IllegalArgumentException.class, () -> bookingService.getAllBookingsByUserId(booker.getId(), State.valueOf("GIVEN"), 0, 2));
-            assertEquals(exception.getMessage(), "No enum constant ru.practicum.shareit.booking.model.State.GIVEN");
-        }
-
-        @Test
-        void getAllBookingsByUserIdWhenWrongParameters() {
-            when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            BadRequestException exception = assertThrows(
-                    BadRequestException.class, () -> bookingService.getAllBookingsByUserId(booker.getId(), State.ALL, -1, 2));
-            assertEquals(exception.getMessage(), Constants.NEGATIVE_VALUE);
+            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
         }
     }
 
@@ -335,7 +286,7 @@ class BookingServiceImplTest {
         @Test
         void getAllBookingsByOwnerId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByItemOwnerId(anyLong(), any(Pageable.class))).thenReturn(List.of(booking));
+            when(bookingRepository.findAllByItemOwnerIdOrderByStartDesc(anyLong(), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.ALL, 0, 2);
 
             groupAssertChecking(bookings.get(0), booking);
@@ -344,7 +295,7 @@ class BookingServiceImplTest {
         @Test
         void getAllFutureBookingsByOwnerId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findALLByItemOwnerIdAndStartIsAfter(
+            when(bookingRepository.findALLByItemOwnerIdAndStartIsAfterOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.FUTURE, 0, 2);
 
@@ -356,7 +307,7 @@ class BookingServiceImplTest {
             booking.setStart(LocalDateTime.now().minusSeconds(2));
             booking.setEnd(LocalDateTime.now().minusSeconds(1));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findALLByItemOwnerIdAndEndIsBefore(
+            when(bookingRepository.findALLByItemOwnerIdAndEndIsBeforeOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.PAST, 0, 2);
 
@@ -368,7 +319,7 @@ class BookingServiceImplTest {
             booking.setStart(LocalDateTime.now().minusSeconds(1));
             booking.setEnd(LocalDateTime.now().plusSeconds(1));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfter(
+            when(bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.CURRENT, 0, 2);
 
@@ -378,7 +329,7 @@ class BookingServiceImplTest {
         @Test
         void getAllWaitingBookingsByOwnerId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByItemOwnerIdAndStatus(
+            when(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                     anyLong(), any(Status.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.WAITING, 0, 2);
 
@@ -389,7 +340,7 @@ class BookingServiceImplTest {
         void getAllRejectedBookingsByOwnerId() {
             booking.setStatus(Status.REJECTED);
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByItemOwnerIdAndStatus(
+            when(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                     anyLong(), any(Status.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.REJECTED, 0, 2);
 
@@ -400,32 +351,17 @@ class BookingServiceImplTest {
         void getAllBookingsByOwnerIdWhenUserNotFound() {
             NotFoundException exception = assertThrows(
                     NotFoundException.class, () -> bookingService.getAllBookingsByOwnerId(booker.getId(), State.WAITING, 0, 2));
-            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
-        }
-
-        @Test
-        void getAllBookingsByOwnerIdWhenWrongState() {
-            IllegalArgumentException exception = assertThrows(
-                    IllegalArgumentException.class, () -> bookingService.getAllBookingsByOwnerId(booker.getId(), State.valueOf("GIVEN"), 0, 2));
-            assertEquals(exception.getMessage(), "No enum constant ru.practicum.shareit.booking.model.State.GIVEN");
-        }
-
-        @Test
-        void getAllBookingsByOwnerIdWhenWrongParameters() {
-            when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            BadRequestException exception = assertThrows(
-                    BadRequestException.class, () -> bookingService.getAllBookingsByOwnerId(booker.getId(), State.ALL, -1, 2));
-            assertEquals(exception.getMessage(), Constants.NEGATIVE_VALUE);
+            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
         }
     }
 
     private void groupAssertChecking(BookingDtoResponse bookingDtoResponse, Booking booking) {
         assertNotNull(bookingDtoResponse);
-        assertEquals(bookingDtoResponse.getId(), booking.getId());
-        assertEquals(bookingDtoResponse.getBooker().getId(), booking.getBooker().getId());
-        assertEquals(bookingDtoResponse.getItem().getId(), booking.getItem().getId());
-        assertEquals(bookingDtoResponse.getStart(), booking.getStart());
-        assertEquals(bookingDtoResponse.getEnd(), booking.getEnd());
-        assertEquals(bookingDtoResponse.getStatus(), booking.getStatus());
+        Assertions.assertEquals(bookingDtoResponse.getId(), booking.getId());
+        Assertions.assertEquals(bookingDtoResponse.getBooker().getId(), booking.getBooker().getId());
+        Assertions.assertEquals(bookingDtoResponse.getItem().getId(), booking.getItem().getId());
+        Assertions.assertEquals(bookingDtoResponse.getStart(), booking.getStart());
+        Assertions.assertEquals(bookingDtoResponse.getEnd(), booking.getEnd());
+        Assertions.assertEquals(bookingDtoResponse.getStatus(), booking.getStatus());
     }
 }

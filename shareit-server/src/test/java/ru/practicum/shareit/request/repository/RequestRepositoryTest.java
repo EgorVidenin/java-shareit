@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.repository;
 
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 class RequestRepositoryTest {
@@ -61,7 +64,7 @@ class RequestRepositoryTest {
 
         assertFalse(itemRequests.isEmpty());
         assertEquals(itemRequests.size(), 1);
-        assertEquals(itemRequests.get(0), itemRequest);
+        Assertions.assertEquals(itemRequests.get(0), itemRequest);
     }
 
     @Test
@@ -77,6 +80,6 @@ class RequestRepositoryTest {
 
         assertFalse(itemRequests.isEmpty());
         assertEquals(itemRequests.size(), 1);
-        assertEquals(itemRequests.get(0), itemRequest);
+        Assertions.assertEquals(itemRequests.get(0), itemRequest);
     }
 }

@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.gateway.booking.dto.BookingRequestDto;
 import ru.practicum.gateway.booking.dto.BookingState;
-import ru.practicum.gateway.constants.Constants;
-import ru.practicum.gateway.exception.BadRequestException;
+import ru.practicum.gateway.constant.Constants;
+import ru.practicum.gateway.error.BadRequestException;
 
 @Controller
 @RequestMapping(path = "/bookings")

@@ -1,13 +1,10 @@
 package ru.practicum.shareit.booking.service;
 
-import java.util.Objects;
-
-
 public abstract class EntryAccessor {
     private EntryAccessor next;
 
     protected void checkNext(InputRequest inputRequest) {
-        if (Objects.nonNull(next)) {
+        if (next != null) {
             next.check(inputRequest);
         }
     }

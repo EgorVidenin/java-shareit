@@ -1,14 +1,13 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.Data;
+
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 public class ItemRequestDto {
-
-    @NotBlank
     private String description;
 }

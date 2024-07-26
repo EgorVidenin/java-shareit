@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 
+import java.time.LocalDateTime;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,10 +17,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
@@ -61,13 +60,13 @@ public class ItemServiceImplIntegrationTest {
         List<ItemDtoResponse> items = itemService.getAll(owner.getId(), 0, 2);
 
         assertFalse(items.isEmpty());
-        assertEquals(items.get(0).getId(), item.getId());
-        assertEquals(items.get(0).getName(), "Кружка");
-        assertEquals(items.get(0).getDescription(), "Цвет синий, материал металл");
-        assertEquals(items.get(0).getLastBooking().getBookerId(), booker.getId());
-        assertEquals(items.get(0).getLastBooking().getId(), lastBooking.getId());
-        assertEquals(items.get(0).getNextBooking().getBookerId(), booker.getId());
-        assertEquals(items.get(0).getNextBooking().getId(), nextBooking.getId());
-        assertEquals(items.get(0).getAvailable(), true);
+        Assertions.assertEquals(items.get(0).getId(), item.getId());
+        Assertions.assertEquals(items.get(0).getName(), "Кружка");
+        Assertions.assertEquals(items.get(0).getDescription(), "Цвет синий, материал металл");
+        Assertions.assertEquals(items.get(0).getLastBooking().getBookerId(), booker.getId());
+        Assertions.assertEquals(items.get(0).getLastBooking().getId(), lastBooking.getId());
+        Assertions.assertEquals(items.get(0).getNextBooking().getBookerId(), booker.getId());
+        Assertions.assertEquals(items.get(0).getNextBooking().getId(), nextBooking.getId());
+        Assertions.assertEquals(items.get(0).getAvailable(), true);
     }
 }
