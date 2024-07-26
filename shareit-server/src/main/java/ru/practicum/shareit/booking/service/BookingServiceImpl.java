@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -82,24 +83,25 @@ public class BookingServiceImpl implements BookingService {
         userAvailableChecker.check(inputRequest);
         userAvailableChecker.checkNext(inputRequest);
         Pageable page = PageRequest.of(from / size, size);
+
         switch (state) {
             case ALL: {
-                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, page));
+                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerId(bookerId, page));
             }
             case FUTURE: {
-                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(bookerId, LocalDateTime.now(), page));
+                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndStartIsAfter(bookerId, LocalDateTime.now(), page));
             }
             case WAITING: {
-                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(bookerId, Status.WAITING, page));
+                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndStatus(bookerId, Status.WAITING, page));
             }
             case REJECTED: {
-                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(bookerId, Status.REJECTED, page));
+                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndStatus(bookerId, Status.REJECTED, page));
             }
             case CURRENT: {
-                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartAsc(bookerId, LocalDateTime.now(), LocalDateTime.now(), page));
+                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(bookerId, LocalDateTime.now(), LocalDateTime.now(), page));
             }
             case PAST: {
-                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(bookerId, LocalDateTime.now(), page));
+                return bookingMapper.toBookingDtoResponseList(bookingRepository.findAllByBookerIdAndEndIsBefore(bookerId, LocalDateTime.now(), page));
             }
         }
         return null;
@@ -111,30 +113,31 @@ public class BookingServiceImpl implements BookingService {
         userAvailableChecker.check(inputRequest);
         userAvailableChecker.checkNext(inputRequest);
         Pageable page = PageRequest.of(from / size, size);
+
         switch (state) {
             case ALL: {
                 return bookingMapper.toBookingDtoResponseList(
-                        bookingRepository.findAllByItemOwnerIdOrderByStartDesc(bookerId, page));
+                        bookingRepository.findAllByItemOwnerId(bookerId, page));
             }
             case WAITING: {
                 return bookingMapper.toBookingDtoResponseList(
-                        bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(bookerId, Status.WAITING, page));
+                        bookingRepository.findAllByItemOwnerIdAndStatus(bookerId, Status.WAITING, page));
             }
             case REJECTED: {
                 return bookingMapper.toBookingDtoResponseList(
-                        bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(bookerId, Status.REJECTED, page));
+                        bookingRepository.findAllByItemOwnerIdAndStatus(bookerId, Status.REJECTED, page));
             }
             case CURRENT: {
                 return bookingMapper.toBookingDtoResponseList(
-                        bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(bookerId, LocalDateTime.now(), LocalDateTime.now(), page));
+                        bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfter(bookerId, LocalDateTime.now(), LocalDateTime.now(), page));
             }
             case FUTURE: {
                 return bookingMapper.toBookingDtoResponseList(
-                        bookingRepository.findALLByItemOwnerIdAndStartIsAfterOrderByStartDesc(bookerId, LocalDateTime.now(), page));
+                        bookingRepository.findALLByItemOwnerIdAndStartIsAfter(bookerId, LocalDateTime.now(), page));
             }
             case PAST: {
                 return bookingMapper.toBookingDtoResponseList(
-                        bookingRepository.findALLByItemOwnerIdAndEndIsBeforeOrderByStartDesc(bookerId, LocalDateTime.now(), page));
+                        bookingRepository.findALLByItemOwnerIdAndEndIsBefore(bookerId, LocalDateTime.now(), page));
             }
         }
         return null;

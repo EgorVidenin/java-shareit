@@ -1,16 +1,21 @@
 package ru.practicum.shareit.booking.dto;
 
-
-import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.experimental.Accessors;
 
-@Getter
-@Setter
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+
+@Data
 @Accessors(chain = true)
 public class BookingDtoRequest {
+
+    @NotNull
     private Long itemId;
+
+    @NotNull
     private LocalDateTime start;
+
+    @NotNull
     private LocalDateTime end;
 }
