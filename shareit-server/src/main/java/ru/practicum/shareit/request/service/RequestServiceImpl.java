@@ -1,30 +1,22 @@
 package ru.practicum.shareit.request.service;
 
 
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.constants.Constants;
-import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.service.ItemMapper;
-import ru.practicum.shareit.item.service.ItemMapperImpl;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +25,6 @@ public class RequestServiceImpl implements RequestService {
     private final ItemRequestMapper itemRequestMapper;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    ItemMapper itemMapper = new ItemMapperImpl();
 
     @Override
     public ItemRequestDtoResponse saveRequest(Long userId, ItemRequestDto itemRequestDto) {
@@ -52,9 +43,6 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<ItemRequestDtoResponse> getAllRequests(Long userId, Integer from, Integer size) {
-        if (from < 0 || size <= 0) {
-            throw new BadRequestException(Constants.NEGATIVE_VALUE);
-        }
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException(Constants.USER_NOT_FOUND));
         Sort sortByDate = Sort.by(Sort.Direction.DESC, "created");
         Pageable page = PageRequest.of(from / size, size, sortByDate);
@@ -72,20 +60,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private List<ItemRequestDtoResponse> setUpItemRequestDtoResponse(List<ItemRequest> itemRequests) {
-        List<Long> requestIds = itemRequests.stream()
-                .map(ItemRequest::getId)
-                .collect(Collectors.toList());
-
-        List<ItemDto> items = itemRepository.findByRequestIdIn(requestIds).stream().map(itemMapper::toItemDto).collect(Collectors.toList());
-
-        Map<Long, List<ItemDto>> itemsByRequest = items.stream()
-                .collect(Collectors.groupingBy(ItemDto::getRequestId, Collectors.toList()));
-
         List<ItemRequestDtoResponse> itemRequestDtoResponses = itemRequestMapper.toItemRequestDtoResponseList(itemRequests);
-        itemRequestDtoResponses.forEach(itemRequestDtoResponse -> {
-            List<ItemDto> itemsForRequest = itemsByRequest.get(itemRequestDtoResponse.getId());
-            itemRequestDtoResponse.setItems(itemsForRequest != null ? itemsForRequest : Collections.emptyList());
-        });
+        itemRequestDtoResponses.forEach(itemRequest -> itemRequest.setItems(itemRepository.findAllByRequestId(itemRequest.getId())));
         return itemRequestDtoResponses;
     }
 }

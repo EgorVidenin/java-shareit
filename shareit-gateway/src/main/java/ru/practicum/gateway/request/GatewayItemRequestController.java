@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.practicum.gateway.constants.Constants;
+import ru.practicum.gateway.constant.Constants;
 import ru.practicum.gateway.request.dto.ItemRequestDto;
 
 @Controller
@@ -48,7 +48,7 @@ public class GatewayItemRequestController {
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getRequestById(@RequestHeader(Constants.HEADER_USER_ID) long userId,
-                                                 @PathVariable Long requestId) {
+                                             @PathVariable Long requestId) {
         return itemRequestClient.getRequestById(userId, requestId);
     }
 }

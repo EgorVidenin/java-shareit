@@ -1,10 +1,10 @@
-package ru.practicum.gateway.exception;
+package ru.practicum.gateway.error;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Data
+@Getter
 public class ErrorResponse {
     private final String error;
 }

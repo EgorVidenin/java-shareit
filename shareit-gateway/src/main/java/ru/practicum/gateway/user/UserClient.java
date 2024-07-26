@@ -42,6 +42,6 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> deleteUserById(Long userId) {
-        return deleteWithPath("/" + userId);
+       return deleteWithPath("/" + userId);
     }
 }

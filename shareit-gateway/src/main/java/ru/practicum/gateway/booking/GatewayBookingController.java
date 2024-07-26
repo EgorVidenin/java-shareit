@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.practicum.gateway.booking.dto.BookingDtoRequest;
+import ru.practicum.gateway.booking.dto.BookingRequestDto;
 import ru.practicum.gateway.booking.dto.BookingState;
-import ru.practicum.gateway.constants.Constants;
-import ru.practicum.gateway.exception.BadRequestException;
+import ru.practicum.gateway.constant.Constants;
+import ru.practicum.gateway.error.BadRequestException;
 
 @Controller
 @RequestMapping(path = "/bookings")
@@ -35,15 +35,15 @@ public class GatewayBookingController {
 
     @PostMapping
     public ResponseEntity<Object> bookItem(@RequestHeader(Constants.HEADER_USER_ID) long userId,
-                                           @RequestBody @Valid BookingDtoRequest bookingDtoRequest) {
-        LocalDateTime startBooking = bookingDtoRequest.getStart();
-        LocalDateTime endBooking = bookingDtoRequest.getEnd();
+                                           @RequestBody @Valid BookingRequestDto bookingRequestDto) {
+        LocalDateTime startBooking = bookingRequestDto.getStart();
+        LocalDateTime endBooking = bookingRequestDto.getEnd();
         if (endBooking.isBefore(startBooking) || endBooking.equals(startBooking)
                 || startBooking.isBefore(LocalDateTime.now())) {
             log.error("Время бронирования некорректно");
             throw new BadRequestException(Constants.WRONG_BOOKING_DATE);
         }
-        return bookingClient.bookItem(userId, bookingDtoRequest);
+        return bookingClient.bookItem(userId, bookingRequestDto);
     }
 
     @GetMapping
