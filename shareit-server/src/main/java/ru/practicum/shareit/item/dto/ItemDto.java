@@ -1,12 +1,11 @@
 package ru.practicum.shareit.item.dto;
 
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -14,6 +13,7 @@ import javax.validation.constraints.NotNull;
 public class ItemDto {
 
     private Long id;
+
     @NotBlank
     private String name;
 

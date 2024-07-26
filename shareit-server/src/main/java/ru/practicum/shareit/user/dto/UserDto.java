@@ -1,12 +1,13 @@
 package ru.practicum.shareit.user.dto;
 
 
-import lombok.Data;
+import javax.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
-
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 public class UserDto {
 

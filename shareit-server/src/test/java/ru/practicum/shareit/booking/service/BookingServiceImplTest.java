@@ -1,7 +1,14 @@
 package ru.practicum.shareit.booking.service;
 
 
-import org.junit.jupiter.api.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,10 +26,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -208,7 +211,7 @@ class BookingServiceImplTest {
         @Test
         void getAllBookingsByUserId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerId(anyLong(), any(Pageable.class))).thenReturn(List.of(booking));
+            when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong(), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.ALL, 0, 2);
 
             groupAssertChecking(bookings.get(0), booking);
@@ -217,7 +220,7 @@ class BookingServiceImplTest {
         @Test
         void getAllFutureBookingsByUserId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndStartIsAfter(
+            when(bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.FUTURE, 0, 2);
 
@@ -229,7 +232,7 @@ class BookingServiceImplTest {
             booking.setStart(LocalDateTime.now().minusSeconds(2));
             booking.setEnd(LocalDateTime.now().minusSeconds(1));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndEndIsBefore(
+            when(bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.PAST, 0, 2);
 
@@ -241,7 +244,7 @@ class BookingServiceImplTest {
             booking.setStart(LocalDateTime.now().minusSeconds(1));
             booking.setEnd(LocalDateTime.now().plusSeconds(1));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(
+            when(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartAsc(
                     anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.CURRENT, 0, 2);
 
@@ -251,7 +254,7 @@ class BookingServiceImplTest {
         @Test
         void getAllWaitingBookingsByUserId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndStatus(
+            when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
                     anyLong(), any(Status.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.WAITING, 0, 2);
 
@@ -262,7 +265,7 @@ class BookingServiceImplTest {
         void getAllRejectedBookingsByUserId() {
             booking.setStatus(Status.REJECTED);
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByBookerIdAndStatus(
+            when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
                     anyLong(), any(Status.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByUserId(booker.getId(), State.REJECTED, 0, 2);
 
@@ -283,7 +286,7 @@ class BookingServiceImplTest {
         @Test
         void getAllBookingsByOwnerId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByItemOwnerId(anyLong(), any(Pageable.class))).thenReturn(List.of(booking));
+            when(bookingRepository.findAllByItemOwnerIdOrderByStartDesc(anyLong(), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.ALL, 0, 2);
 
             groupAssertChecking(bookings.get(0), booking);
@@ -292,7 +295,7 @@ class BookingServiceImplTest {
         @Test
         void getAllFutureBookingsByOwnerId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findALLByItemOwnerIdAndStartIsAfter(
+            when(bookingRepository.findALLByItemOwnerIdAndStartIsAfterOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.FUTURE, 0, 2);
 
@@ -304,7 +307,7 @@ class BookingServiceImplTest {
             booking.setStart(LocalDateTime.now().minusSeconds(2));
             booking.setEnd(LocalDateTime.now().minusSeconds(1));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findALLByItemOwnerIdAndEndIsBefore(
+            when(bookingRepository.findALLByItemOwnerIdAndEndIsBeforeOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.PAST, 0, 2);
 
@@ -316,7 +319,7 @@ class BookingServiceImplTest {
             booking.setStart(LocalDateTime.now().minusSeconds(1));
             booking.setEnd(LocalDateTime.now().plusSeconds(1));
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfter(
+            when(bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
                     anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.CURRENT, 0, 2);
 
@@ -326,7 +329,7 @@ class BookingServiceImplTest {
         @Test
         void getAllWaitingBookingsByOwnerId() {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByItemOwnerIdAndStatus(
+            when(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                     anyLong(), any(Status.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.WAITING, 0, 2);
 
@@ -337,7 +340,7 @@ class BookingServiceImplTest {
         void getAllRejectedBookingsByOwnerId() {
             booking.setStatus(Status.REJECTED);
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-            when(bookingRepository.findAllByItemOwnerIdAndStatus(
+            when(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                     anyLong(), any(Status.class), any(Pageable.class))).thenReturn(List.of(booking));
             List<BookingDtoResponse> bookings = bookingService.getAllBookingsByOwnerId(owner.getId(), State.REJECTED, 0, 2);
 

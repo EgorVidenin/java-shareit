@@ -1,15 +1,16 @@
 package ru.practicum.shareit.request.dto;
 
 
-import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import ru.practicum.shareit.item.model.Item;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.List;
-
-@Data
+@Setter
+@Getter
 @Accessors(chain = true)
 public class ItemRequestDtoResponse {
 

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;

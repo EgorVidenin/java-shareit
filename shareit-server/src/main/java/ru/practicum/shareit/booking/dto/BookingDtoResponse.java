@@ -1,12 +1,14 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.Data;
+
+import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.booking.model.Status;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-
-@Data
+@Setter
+@Getter
 public class BookingDtoResponse {
 
     @NotNull
@@ -27,14 +29,16 @@ public class BookingDtoResponse {
     @NotNull
     private UserDto booker;
 
-    @Data
+    @Setter
+    @Getter
     public static class UserDto {
 
         @NotNull
         private Long id;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class ItemDto {
 
         @NotNull
