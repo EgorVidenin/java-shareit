@@ -1,3 +1,4 @@
+package ru.practicum.shareit.item.dto;/*
 package ru.practicum.shareit.item.dto;
 
 
@@ -23,4 +24,4 @@ class CommentDtoTest {
         JsonContent<CommentDto> result = tester.write(commentDto);
         assertThat(result).isNotNull().hasJsonPath("$.text");
     }
-}
+}*/

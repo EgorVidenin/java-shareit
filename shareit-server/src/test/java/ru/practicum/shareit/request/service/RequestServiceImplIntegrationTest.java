@@ -1,6 +1,9 @@
 package ru.practicum.shareit.request.service;
 
 
+import java.time.LocalDateTime;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,10 +14,6 @@ import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
@@ -39,8 +38,8 @@ public class RequestServiceImplIntegrationTest {
 
         List<ItemRequestDtoResponse> requestDtoResponseList = requestService.getAllByRequesterId(requester.getId());
         assertFalse(requestDtoResponseList.isEmpty());
-        assertEquals(requestDtoResponseList.get(0).getId(), 1L);
-        assertEquals(requestDtoResponseList.get(0).getDescription(), "Ищу кружку");
-        assertEquals(requestDtoResponseList.get(0).getCreated().toString(), "2024-07-14T13:00");
+        Assertions.assertEquals(requestDtoResponseList.get(0).getId(), 1L);
+        Assertions.assertEquals(requestDtoResponseList.get(0).getDescription(), "Ищу кружку");
+        Assertions.assertEquals(requestDtoResponseList.get(0).getCreated().toString(), "2024-07-14T13:00");
     }
 }

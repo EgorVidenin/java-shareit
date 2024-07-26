@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 @Component
 @RequiredArgsConstructor
 public class UserAvailableChecker extends EntryAccessor {
-
     private final UserRepository userRepository;
 
     @Override
