@@ -1,13 +1,14 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 public class ItemDtoResponse {
 
@@ -19,8 +20,11 @@ public class ItemDtoResponse {
     private BookingDto nextBooking;
     private List<CommentDtoResponse> comments;
 
+    @Getter
+    @Setter
     @AllArgsConstructor
-    @Data
+    @NoArgsConstructor
+    @EqualsAndHashCode
     public static class BookingDto {
 
         @NotNull

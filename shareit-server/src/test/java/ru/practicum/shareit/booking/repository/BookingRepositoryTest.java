@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -73,7 +72,7 @@ class BookingRepositoryTest {
             List<Booking> bookings = bookingRepository.findALLByItem(item);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
@@ -84,7 +83,7 @@ class BookingRepositoryTest {
             List<Booking> bookings = bookingRepository.findAllByItemIdAndBookerIdAndEndIsBefore(item.getId(), booker.getId(), LocalDateTime.now());
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
     }
 
@@ -95,20 +94,20 @@ class BookingRepositoryTest {
         @Test
         @DisplayName("find all bookings by booker id")
         void findAllByBookerIdOrderByStartDesc() {
-            List<Booking> bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(booker.getId(), pageable);
+            List<Booking> bookings = bookingRepository.findAllByBookerId(booker.getId(), pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test()
         @DisplayName("find all future bookings by booker id")
         void findAllByBookerIdAndStartIsAfterOrderByStartDesc() {
             booking.setStart(LocalDateTime.now().plusMinutes(1));
-            List<Booking> bookings = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(booker.getId(), LocalDateTime.now(), pageable);
+            List<Booking> bookings = bookingRepository.findAllByBookerIdAndStartIsAfter(booker.getId(), LocalDateTime.now(), pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
@@ -116,10 +115,10 @@ class BookingRepositoryTest {
         void findAllByBookerIdAndEndIsBeforeOrderByStartDesc() {
             booking.setStart(LocalDateTime.now().minusDays(2));
             booking.setEnd(LocalDateTime.now().minusMinutes(1));
-            List<Booking> bookings = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(booker.getId(), LocalDateTime.now(), pageable);
+            List<Booking> bookings = bookingRepository.findAllByBookerIdAndEndIsBefore(booker.getId(), LocalDateTime.now(), pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
@@ -127,25 +126,25 @@ class BookingRepositoryTest {
         void findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc() {
             booking.setStart(LocalDateTime.now().minusMinutes(1));
             booking.setEnd(LocalDateTime.now().plusMinutes(1));
-            List<Booking> bookings = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartAsc(booker.getId(), LocalDateTime.now(), LocalDateTime.now(), pageable);
+            List<Booking> bookings = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(booker.getId(), LocalDateTime.now(), LocalDateTime.now(), pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
         @DisplayName("find all bookings by booker id with status 'waiting'")
         void findAllByBookerIdAndStatusIsWaiting() {
-            List<Booking> bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(booker.getId(), Status.WAITING, pageable);
+            List<Booking> bookings = bookingRepository.findAllByBookerIdAndStatus(booker.getId(), Status.WAITING, pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
         @DisplayName("find all bookings by booker id with status not 'waiting'")
         void findAllByBookerIdAndStatusIsNotWaiting() {
-            List<Booking> bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(booker.getId(), Status.REJECTED, pageable);
+            List<Booking> bookings = bookingRepository.findAllByBookerIdAndStatus(booker.getId(), Status.REJECTED, pageable);
 
             assertTrue(bookings.isEmpty());
         }
@@ -158,20 +157,20 @@ class BookingRepositoryTest {
         @Test
         @DisplayName("find all bookings by owner id")
         void findAllByItemOwnerIdOrderByStartDesc() {
-            List<Booking> bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(owner.getId(), pageable);
+            List<Booking> bookings = bookingRepository.findAllByItemOwnerId(owner.getId(), pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
         @DisplayName("find all future bookings by owner id")
         void findALLByItemOwnerIdAndStartIsAfterOrderByStartDesc() {
             booking.setStart(LocalDateTime.now().plusMinutes(1));
-            List<Booking> bookings = bookingRepository.findALLByItemOwnerIdAndStartIsAfterOrderByStartDesc(owner.getId(), LocalDateTime.now(), pageable);
+            List<Booking> bookings = bookingRepository.findALLByItemOwnerIdAndStartIsAfter(owner.getId(), LocalDateTime.now(), pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
@@ -179,10 +178,10 @@ class BookingRepositoryTest {
         void findALLByItemOwnerIdAndEndIsBeforeOrderByStartDesc() {
             booking.setStart(LocalDateTime.now().minusDays(2));
             booking.setEnd(LocalDateTime.now().minusMinutes(1));
-            List<Booking> bookings = bookingRepository.findALLByItemOwnerIdAndEndIsBeforeOrderByStartDesc(owner.getId(), LocalDateTime.now(), pageable);
+            List<Booking> bookings = bookingRepository.findALLByItemOwnerIdAndEndIsBefore(owner.getId(), LocalDateTime.now(), pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
@@ -190,25 +189,25 @@ class BookingRepositoryTest {
         void findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc() {
             booking.setStart(LocalDateTime.now().minusMinutes(1));
             booking.setEnd(LocalDateTime.now().plusMinutes(1));
-            List<Booking> bookings = bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(owner.getId(), LocalDateTime.now(), LocalDateTime.now(), pageable);
+            List<Booking> bookings = bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfter(owner.getId(), LocalDateTime.now(), LocalDateTime.now(), pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
         @DisplayName("find all bookings by booker id with status 'waiting'")
         void findAllByItemOwnerIdAndStatusStatusIsWaiting() {
-            List<Booking> bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(owner.getId(), Status.WAITING, pageable);
+            List<Booking> bookings = bookingRepository.findAllByItemOwnerIdAndStatus(owner.getId(), Status.WAITING, pageable);
 
             assertEquals(bookings.size(), 1);
-            Assertions.assertEquals(bookings.get(0), booking);
+            assertEquals(bookings.get(0), booking);
         }
 
         @Test
         @DisplayName("find all bookings by booker id with status not 'waiting'")
         void findAllByItemOwnerIdAndStatusStatusIsNotWaiting() {
-            List<Booking> bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(owner.getId(), Status.REJECTED, pageable);
+            List<Booking> bookings = bookingRepository.findAllByItemOwnerIdAndStatus(owner.getId(), Status.REJECTED, pageable);
 
             assertTrue(bookings.isEmpty());
         }

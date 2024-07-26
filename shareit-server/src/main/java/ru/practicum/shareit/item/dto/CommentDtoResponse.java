@@ -1,13 +1,20 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Data;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Accessors(chain = true)
+@EqualsAndHashCode
 public class CommentDtoResponse {
 
     @NotNull
