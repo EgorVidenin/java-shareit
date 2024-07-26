@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.controller;
 
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,12 @@ import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.constant.Constants;
+import ru.practicum.shareit.constants.Constants;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -28,7 +32,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoResponse saveBooking(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                          @RequestBody BookingDtoRequest bookingDtoRequest) {
+                                          @RequestBody @Valid BookingDtoRequest bookingDtoRequest) {
         log.info("Post-запрос saveBooking");
         return bookingService.save(userId, bookingDtoRequest);
     }
@@ -50,18 +54,19 @@ public class BookingController {
 
     @GetMapping
     List<BookingDtoResponse> getAllBookingsByUserId(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                                    @RequestParam State state,
-                                                    @RequestParam Integer from,
-                                                    @RequestParam Integer size) {
+                                                    @RequestParam(defaultValue = "ALL", required = false) State state,
+                                                    @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                    @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("Get-запрос getAllBookingsByUserId");
         return bookingService.getAllBookingsByUserId(userId, state, from, size);
     }
 
+
     @GetMapping("/owner")
     List<BookingDtoResponse> getAllBookingsByOwnerId(@RequestHeader(Constants.HEADER_USER_ID) Long ownerId,
-                                                     @RequestParam State state,
-                                                     @RequestParam Integer from,
-                                                     @RequestParam Integer size) {
+                                                     @RequestParam(defaultValue = "ALL", required = false) State state,
+                                                     @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                     @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("Get-запрос getAllBookingsByOwnerId");
         return bookingService.getAllBookingsByOwnerId(ownerId, state, from, size);
     }

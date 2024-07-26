@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.controller;
 
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +12,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.constant.Constants;
+import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
 import ru.practicum.shareit.item.service.ItemService;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 
 @RestController
 @RequestMapping("/items")
@@ -29,7 +33,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto save(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                        @RequestBody ItemDto itemDto) {
+                        @RequestBody @Valid ItemDto itemDto) {
         log.info("Post-запрос на добавление Item");
         return itemService.save(userId, itemDto);
     }
@@ -51,17 +55,17 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDtoResponse> getAll(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                        @RequestParam Integer from,
-                                        @RequestParam Integer size) {
+                                        @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                        @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("GET-запрос на получение всех Item Юзера c ID = {}", userId);
         return itemService.getAll(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                     @RequestParam String text,
-                                     @RequestParam Integer from,
-                                     @RequestParam Integer size) {
+                                     @RequestParam(required = false) String text,
+                                     @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                     @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("GET-запрос от User c ID = {} на поиск Item ", userId);
         return itemService.searchItems(userId, text, from, size);
     }
@@ -69,7 +73,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDtoResponse addComment(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
                                          @PathVariable Long itemId,
-                                         @RequestBody CommentDto commentDto) {
+                                         @RequestBody @Valid CommentDto commentDto) {
         log.info("Post-запрос addComment");
         return itemService.addComment(userId, itemId, commentDto);
     }

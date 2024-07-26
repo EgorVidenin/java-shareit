@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class CommentRepositoryTest {
@@ -61,9 +58,9 @@ class CommentRepositoryTest {
         List<Comment> comments = commentRepository.findAllByItemIdOrderByCreatedDesc(item.getId());
         assertFalse(comments.isEmpty());
         assertEquals(comments.size(), 1);
-        Assertions.assertEquals(comments.get(0).getId(), comment.getId());
-        Assertions.assertEquals(comments.get(0).getText(), comment.getText());
-        Assertions.assertEquals(comments.get(0).getCreated(), comment.getCreated());
-        Assertions.assertEquals(comments.get(0).getAuthor(), comment.getAuthor());
+        assertEquals(comments.get(0).getId(), comment.getId());
+        assertEquals(comments.get(0).getText(), comment.getText());
+        assertEquals(comments.get(0).getCreated(), comment.getCreated());
+        assertEquals(comments.get(0).getAuthor(), comment.getAuthor());
     }
 }

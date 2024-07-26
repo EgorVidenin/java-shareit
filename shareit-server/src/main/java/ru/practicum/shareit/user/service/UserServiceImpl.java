@@ -1,28 +1,27 @@
 package ru.practicum.shareit.user.service;
 
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import ru.practicum.shareit.constants.Constants;
+import ru.practicum.shareit.exception.DuplicateEmailException;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.constant.Constants;
-import ru.practicum.shareit.error.DuplicateEmailException;
-import ru.practicum.shareit.error.NotFoundException;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Setter
-@Getter
+@Data
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
     public UserDto create(UserDto userDto) {
         emails.add(userDto.getEmail());
         User user = userRepository.save(userMapper.toUser(userDto));
-        log.info("Юзер с id = {} добавлен", user.getId());
+        log.info("User с id = {} добавлен", user.getId());
         return userMapper.toUserDto(user);
     }
 
@@ -46,7 +45,7 @@ public class UserServiceImpl implements UserService {
         }
         userMapper.updateUserFromUserDto(userDto, user);
         User userResponse = userRepository.save(user);
-        log.info("Юзер с id = {} обновлен", user.getId());
+        log.info("User с id = {} обновлен", user.getId());
         return userMapper.toUserDto(userResponse);
     }
 

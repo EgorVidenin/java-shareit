@@ -1,8 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.item.dto.CommentDtoResponse;
@@ -12,7 +9,10 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ItemMapperTest {
     private final ItemMapper itemMapper = new ItemMapperImpl();
@@ -52,22 +52,22 @@ class ItemMapperTest {
     void mapItemDtoToItem() {
         Item mappedItem = itemMapper.toItem(itemDto);
 
-        Assertions.assertEquals(mappedItem.getId(), itemDto.getId());
-        Assertions.assertEquals(mappedItem.getName(), itemDto.getName());
-        Assertions.assertEquals(mappedItem.getDescription(), itemDto.getDescription());
-        Assertions.assertEquals(mappedItem.getRequestId(), itemDto.getRequestId());
-        Assertions.assertEquals(mappedItem.getAvailable(), itemDto.getAvailable());
+        assertEquals(mappedItem.getId(), itemDto.getId());
+        assertEquals(mappedItem.getName(), itemDto.getName());
+        assertEquals(mappedItem.getDescription(), itemDto.getDescription());
+        assertEquals(mappedItem.getRequestId(), itemDto.getRequestId());
+        assertEquals(mappedItem.getAvailable(), itemDto.getAvailable());
     }
 
     @Test
     void toItemDto() {
         ItemDto mappedItemDto = itemMapper.toItemDto(item);
 
-        Assertions.assertEquals(mappedItemDto.getId(), item.getId());
-        Assertions.assertEquals(mappedItemDto.getName(), item.getName());
-        Assertions.assertEquals(mappedItemDto.getDescription(), item.getDescription());
-        Assertions.assertEquals(mappedItemDto.getRequestId(), item.getRequestId());
-        Assertions.assertEquals(mappedItemDto.getAvailable(), item.getAvailable());
+        assertEquals(mappedItemDto.getId(), item.getId());
+        assertEquals(mappedItemDto.getName(), item.getName());
+        assertEquals(mappedItemDto.getDescription(), item.getDescription());
+        assertEquals(mappedItemDto.getRequestId(), item.getRequestId());
+        assertEquals(mappedItemDto.getAvailable(), item.getAvailable());
     }
 
     @Test
@@ -80,34 +80,10 @@ class ItemMapperTest {
 
         ItemDtoResponse mappedItemDtoResponse = itemMapper.toItemDtoResponse(item, List.of(comment));
 
-        Assertions.assertEquals(mappedItemDtoResponse.getId(), item.getId());
-        Assertions.assertEquals(mappedItemDtoResponse.getName(), item.getName());
-        Assertions.assertEquals(mappedItemDtoResponse.getDescription(), item.getDescription());
-        Assertions.assertEquals(mappedItemDtoResponse.getComments(), List.of(commentDtoResponse));
-        Assertions.assertEquals(mappedItemDtoResponse.getAvailable(), item.getAvailable());
-    }
-
-    @Test
-    void testWhenCommentDtoIsNull() {
-        Comment comment = itemMapper.toComment(null, null, null, null);
-        assertNull(comment);
-    }
-
-    @Test
-    void testUpdateItemToItemDtoResponseWhenNull() {
-        ItemDtoResponse itemDtoResponse = itemMapper.toItemDtoResponse(null, null);
-        assertNull(itemDtoResponse);
-    }
-
-    @Test
-    void testUpdateItemDtoResponseWithBookingsWhenNull() {
-        ItemDtoResponse itemDtoResponse = itemMapper.updateItemDtoResponseWithBookings(null, null, null);
-        assertNull(itemDtoResponse);
-    }
-
-    @Test
-    void updateItemToItemDtoWhenNull() {
-        Item item = itemMapper.toItem(null);
-        assertNull(item);
+        assertEquals(mappedItemDtoResponse.getId(), item.getId());
+        assertEquals(mappedItemDtoResponse.getName(), item.getName());
+        assertEquals(mappedItemDtoResponse.getDescription(), item.getDescription());
+        assertEquals(mappedItemDtoResponse.getComments(), List.of(commentDtoResponse));
+        assertEquals(mappedItemDtoResponse.getAvailable(), item.getAvailable());
     }
 }

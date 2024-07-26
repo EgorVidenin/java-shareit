@@ -1,4 +1,4 @@
-package ru.practicum.gateway.error;
+package ru.practicum.gateway.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

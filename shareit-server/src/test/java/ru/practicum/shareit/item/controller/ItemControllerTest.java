@@ -2,9 +2,6 @@ package ru.practicum.shareit.item.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import org.hamcrest.Matchers;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,22 +9,22 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.practicum.shareit.constant.Constants;
+import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
 import ru.practicum.shareit.item.service.ItemService;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ItemController.class)
@@ -52,11 +49,26 @@ class ItemControllerTest {
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(item.getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(item.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is(item.getDescription())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.available", Matchers.is(item.getAvailable())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.requestId", Matchers.is(item.getRequestId())));
+                .andExpect(jsonPath("$.id", is(item.getId())))
+                .andExpect(jsonPath("$.name", is(item.getName())))
+                .andExpect(jsonPath("$.description", is(item.getDescription())))
+                .andExpect(jsonPath("$.available", is(item.getAvailable())))
+                .andExpect(jsonPath("$.requestId", is(item.getRequestId())));
+    }
+
+    @Test
+    void saveItemWhenError() throws Exception {
+        ItemDto item = generator.nextObject(ItemDto.class);
+        item.setName(null);
+
+        mvc.perform(post("/items")
+                        .content(mapper.writeValueAsString(item))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(Constants.HEADER_USER_ID, 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.error").value(containsString("must not be blank")));
     }
 
     @Test
@@ -71,11 +83,11 @@ class ItemControllerTest {
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(item.getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(item.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is(item.getDescription())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.available", Matchers.is(item.getAvailable())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.requestId", Matchers.is(item.getRequestId())));
+                .andExpect(jsonPath("$.id", is(item.getId())))
+                .andExpect(jsonPath("$.name", is(item.getName())))
+                .andExpect(jsonPath("$.description", is(item.getDescription())))
+                .andExpect(jsonPath("$.available", is(item.getAvailable())))
+                .andExpect(jsonPath("$.requestId", is(item.getRequestId())));
     }
 
     @Test
@@ -89,14 +101,14 @@ class ItemControllerTest {
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(itemDtoResponse.getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(itemDtoResponse.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is(itemDtoResponse.getDescription())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.available", Matchers.is(itemDtoResponse.getAvailable())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.nextBooking.id", Matchers.is(itemDtoResponse.getNextBooking().getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastBooking.id", Matchers.is(itemDtoResponse.getLastBooking().getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.nextBooking.bookerId", Matchers.is(itemDtoResponse.getNextBooking().getBookerId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastBooking.bookerId", Matchers.is(itemDtoResponse.getLastBooking().getBookerId())));
+                .andExpect(jsonPath("$.id", is(itemDtoResponse.getId())))
+                .andExpect(jsonPath("$.name", is(itemDtoResponse.getName())))
+                .andExpect(jsonPath("$.description", is(itemDtoResponse.getDescription())))
+                .andExpect(jsonPath("$.available", is(itemDtoResponse.getAvailable())))
+                .andExpect(jsonPath("$.nextBooking.id", is(itemDtoResponse.getNextBooking().getId())))
+                .andExpect(jsonPath("$.lastBooking.id", is(itemDtoResponse.getLastBooking().getId())))
+                .andExpect(jsonPath("$.nextBooking.bookerId", is(itemDtoResponse.getNextBooking().getBookerId())))
+                .andExpect(jsonPath("$.lastBooking.bookerId", is(itemDtoResponse.getLastBooking().getBookerId())));
     }
 
     @Test
@@ -106,20 +118,19 @@ class ItemControllerTest {
         when(itemService.getAll(anyLong(), anyInt(), anyInt())).thenReturn(itemDtoResponses);
 
         mvc.perform(get("/items")
-                        .param("from", "0")
-                        .param("size", "1")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['id']", Matchers.is(itemDtoResponses.get(0).getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['description']", Matchers.is((itemDtoResponses.get(0).getDescription()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['available']", Matchers.is(itemDtoResponses.get(0).getAvailable())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['nextBooking']['id']", Matchers.is((itemDtoResponses.get(0).getNextBooking().getId()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['lastBooking']['id']", Matchers.is((itemDtoResponses.get(0).getLastBooking().getId()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['nextBooking']['bookerId']", Matchers.is((itemDtoResponses.get(0).getNextBooking().getBookerId()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['lastBooking']['bookerId']", Matchers.is((itemDtoResponses.get(0).getLastBooking().getBookerId()))));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0]['id']", is(itemDtoResponses.get(0).getId())))
+                .andExpect(jsonPath("$.[0]['description']", is((itemDtoResponses.get(0).getDescription()))))
+                .andExpect(jsonPath("$.[0]['available']", is(itemDtoResponses.get(0).getAvailable())))
+                .andExpect(jsonPath("$.[0]['nextBooking']['id']", is((itemDtoResponses.get(0).getNextBooking().getId()))))
+                .andExpect(jsonPath("$.[0]['lastBooking']['id']", is((itemDtoResponses.get(0).getLastBooking().getId()))))
+                .andExpect(jsonPath("$.[0]['nextBooking']['bookerId']", is((itemDtoResponses.get(0).getNextBooking().getBookerId()))))
+                .andExpect(jsonPath("$.[0]['lastBooking']['bookerId']", is((itemDtoResponses.get(0).getLastBooking().getBookerId()))));
     }
 
     @Test
@@ -129,18 +140,17 @@ class ItemControllerTest {
         when(itemService.searchItems(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(itemDtoList);
 
         mvc.perform(get("/items/search")
-                        .queryParam("text", "java")
-                        .queryParam("from", "0")
-                        .queryParam("size", "1")
+                        .queryParam("text", "sscs")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['id']", Matchers.is(itemDtoList.get(0).getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['description']", Matchers.is((itemDtoList.get(0).getDescription()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['available']", Matchers.is(itemDtoList.get(0).getAvailable())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['name']", Matchers.is((itemDtoList.get(0).getName()))));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0]['id']", is(itemDtoList.get(0).getId())))
+                .andExpect(jsonPath("$.[0]['description']", is((itemDtoList.get(0).getDescription()))))
+                .andExpect(jsonPath("$.[0]['available']", is(itemDtoList.get(0).getAvailable())))
+                .andExpect(jsonPath("$.[0]['name']", is((itemDtoList.get(0).getName()))));
     }
 
     @Test
@@ -156,9 +166,24 @@ class ItemControllerTest {
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(commentDtoResponse.getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.authorName", Matchers.is(commentDtoResponse.getAuthorName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.text", Matchers.is(commentDtoResponse.getText())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.created", Matchers.is(commentDtoResponse.getCreated().toString())));
+                .andExpect(jsonPath("$.id", is(commentDtoResponse.getId())))
+                .andExpect(jsonPath("$.authorName", is(commentDtoResponse.getAuthorName())))
+                .andExpect(jsonPath("$.text", is(commentDtoResponse.getText())))
+                .andExpect(jsonPath("$.created", is(commentDtoResponse.getCreated().toString())));
+    }
+
+    @Test
+    void addCommentWhenError() throws Exception {
+        CommentDto commentDto = generator.nextObject(CommentDto.class);
+        commentDto.setText(" ");
+
+        mvc.perform(post("/items/{itemId}/comment", 1L)
+                        .content(mapper.writeValueAsString(commentDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(Constants.HEADER_USER_ID, 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.error").value(containsString("must not be blank")));
     }
 }

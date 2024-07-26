@@ -1,13 +1,13 @@
 package ru.practicum.shareit.user.service;
 
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
@@ -24,8 +24,8 @@ public class UserServiceImplIntegrationTest {
 
         UserDto userResponse = userService.create(userDto);
         assertNotNull(userResponse);
-        Assertions.assertEquals(userResponse.getId(), 1L);
-        Assertions.assertEquals(userResponse.getName(), "Dima");
-        Assertions.assertEquals(userResponse.getEmail(), "dima@mail.com");
+        assertEquals(userResponse.getId(), 1L);
+        assertEquals(userResponse.getName(), "Dima");
+        assertEquals(userResponse.getEmail(), "dima@mail.com");
     }
 }

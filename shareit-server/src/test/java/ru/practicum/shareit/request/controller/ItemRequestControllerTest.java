@@ -2,10 +2,6 @@ package ru.practicum.shareit.request.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.hamcrest.CoreMatchers;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +9,24 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.practicum.shareit.constant.Constants;
-import ru.practicum.shareit.item.model.Item;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import ru.practicum.shareit.constants.Constants;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.service.RequestService;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ItemRequestController.class)
@@ -51,13 +52,29 @@ class ItemRequestControllerTest {
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", CoreMatchers.is(itemRequestDtoResponse.getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description", CoreMatchers.is(itemRequestDtoResponse.getDescription())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.created", CoreMatchers.is(itemRequestDtoResponse.getCreated().toString())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$..items[*].id", CoreMatchers.is((itemRequestDtoResponse.getItems().stream()
-                        .map(Item::getId).collect(Collectors.toList())))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$..items[*].name", CoreMatchers.is((itemRequestDtoResponse.getItems().stream()
-                        .map(Item::getName).collect(Collectors.toList())))));
+                .andExpect(jsonPath("$.id", is(itemRequestDtoResponse.getId())))
+                .andExpect(jsonPath("$.description", is(itemRequestDtoResponse.getDescription())))
+                .andExpect(jsonPath("$.created", is(itemRequestDtoResponse.getCreated().toString())))
+                .andExpect(jsonPath("$..items[*].id", is((itemRequestDtoResponse.getItems().stream()
+                        .map(ItemDto::getId).collect(Collectors.toList())))))
+                .andExpect(jsonPath("$..items[*].name", is((itemRequestDtoResponse.getItems().stream()
+                        .map(ItemDto::getName).collect(Collectors.toList())))));
+    }
+
+    @Test
+    void saveRequestWhenError() throws Exception {
+        ItemRequestDto itemRequestDto = generator.nextObject(ItemRequestDto.class);
+        itemRequestDto.setDescription("");
+
+        mvc.perform(post("/requests")
+                        .content(mapper.writeValueAsString(itemRequestDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(Constants.HEADER_USER_ID, 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.error").value(containsString("must not be blank")));
     }
 
     @Test
@@ -72,13 +89,13 @@ class ItemRequestControllerTest {
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['id']", CoreMatchers.is(itemRequestDtoResponseList.get(0).getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['created']", CoreMatchers.is((itemRequestDtoResponseList.get(0).getCreated().toString()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['description']", CoreMatchers.is((itemRequestDtoResponseList.get(0).getDescription()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$..items[*].id", CoreMatchers.is((itemRequestDtoResponseList.get(0).getItems().stream()
-                        .map(Item::getId).collect(Collectors.toList())))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$..items[*].name", CoreMatchers.is((itemRequestDtoResponseList.get(0).getItems().stream()
-                        .map(Item::getName).collect(Collectors.toList())))));
+                .andExpect(jsonPath("$.[0]['id']", is(itemRequestDtoResponseList.get(0).getId())))
+                .andExpect(jsonPath("$.[0]['created']", is((itemRequestDtoResponseList.get(0).getCreated().toString()))))
+                .andExpect(jsonPath("$.[0]['description']", is((itemRequestDtoResponseList.get(0).getDescription()))))
+                .andExpect(jsonPath("$..items[*].id", is((itemRequestDtoResponseList.get(0).getItems().stream()
+                        .map(ItemDto::getId).collect(Collectors.toList())))))
+                .andExpect(jsonPath("$..items[*].name", is((itemRequestDtoResponseList.get(0).getItems().stream()
+                        .map(ItemDto::getName).collect(Collectors.toList())))));
     }
 
     @Test
@@ -88,20 +105,18 @@ class ItemRequestControllerTest {
         when(requestService.getAllRequests(anyLong(), anyInt(), anyInt())).thenReturn(itemRequestDtoResponseList);
 
         mvc.perform(get("/requests/all")
-                        .param("from", "0")
-                        .param("size", "1")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['id']", CoreMatchers.is(itemRequestDtoResponseList.get(0).getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['created']", CoreMatchers.is((itemRequestDtoResponseList.get(0).getCreated().toString()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]['description']", CoreMatchers.is((itemRequestDtoResponseList.get(0).getDescription()))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$..items[*].id", CoreMatchers.is((itemRequestDtoResponseList.get(0).getItems().stream()
-                        .map(Item::getId).collect(Collectors.toList())))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$..items[*].name", CoreMatchers.is((itemRequestDtoResponseList.get(0).getItems().stream()
-                        .map(Item::getName).collect(Collectors.toList())))));
+                .andExpect(jsonPath("$.[0]['id']", is(itemRequestDtoResponseList.get(0).getId())))
+                .andExpect(jsonPath("$.[0]['created']", is((itemRequestDtoResponseList.get(0).getCreated().toString()))))
+                .andExpect(jsonPath("$.[0]['description']", is((itemRequestDtoResponseList.get(0).getDescription()))))
+                .andExpect(jsonPath("$..items[*].id", is((itemRequestDtoResponseList.get(0).getItems().stream()
+                        .map(ItemDto::getId).collect(Collectors.toList())))))
+                .andExpect(jsonPath("$..items[*].name", is((itemRequestDtoResponseList.get(0).getItems().stream()
+                        .map(ItemDto::getName).collect(Collectors.toList())))));
     }
 
     @Test
@@ -115,12 +130,12 @@ class ItemRequestControllerTest {
                         .header(Constants.HEADER_USER_ID, 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", CoreMatchers.is(itemRequestDtoResponse.getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description", CoreMatchers.is(itemRequestDtoResponse.getDescription())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.created", CoreMatchers.is(itemRequestDtoResponse.getCreated().toString())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$..items[*].id", CoreMatchers.is((itemRequestDtoResponse.getItems().stream()
-                        .map(Item::getId).collect(Collectors.toList())))))
-                .andExpect(MockMvcResultMatchers.jsonPath("$..items[*].name", CoreMatchers.is((itemRequestDtoResponse.getItems().stream()
-                        .map(Item::getName).collect(Collectors.toList())))));
+                .andExpect(jsonPath("$.id", is(itemRequestDtoResponse.getId())))
+                .andExpect(jsonPath("$.description", is(itemRequestDtoResponse.getDescription())))
+                .andExpect(jsonPath("$.created", is(itemRequestDtoResponse.getCreated().toString())))
+                .andExpect(jsonPath("$..items[*].id", is((itemRequestDtoResponse.getItems().stream()
+                        .map(ItemDto::getId).collect(Collectors.toList())))))
+                .andExpect(jsonPath("$..items[*].name", is((itemRequestDtoResponse.getItems().stream()
+                        .map(ItemDto::getName).collect(Collectors.toList())))));
     }
 }

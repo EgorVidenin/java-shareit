@@ -1,9 +1,6 @@
 package ru.practicum.shareit.user.service;
 
 
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,22 +8,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.shareit.constant.Constants;
-import ru.practicum.shareit.error.DuplicateEmailException;
-import ru.practicum.shareit.error.NotFoundException;
+import ru.practicum.shareit.constants.Constants;
+import ru.practicum.shareit.exception.DuplicateEmailException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -65,11 +60,17 @@ class UserServiceImplTest {
             UserDto userForResponse = userService.create(userDto1Id);
 
             assertNotNull(userForResponse);
-            Assertions.assertEquals(userForResponse.getId(), 1L);
-            Assertions.assertEquals(userForResponse.getName(), "Petr");
-            Assertions.assertEquals(userForResponse.getEmail(), "petrov@mail.com");
+            assertEquals(userForResponse.getId(), 1L);
+            assertEquals(userForResponse.getName(), "Petr");
+            assertEquals(userForResponse.getEmail(), "petrov@mail.com");
 
             verify(userRepository, times(1)).save(any(User.class));
+        }
+
+        @Test
+        void saveUserWhenUserDtoEqualNull() {
+            assertThrows(
+                    NullPointerException.class, () -> userService.create(null));
         }
     }
 
@@ -102,7 +103,7 @@ class UserServiceImplTest {
 
             DuplicateEmailException exception =
                     assertThrows(DuplicateEmailException.class, () -> userService.update(2L, userDto2Id));
-            Assertions.assertEquals(exception.getMessage(), Constants.EMAIL_BUSY);
+            assertEquals(exception.getMessage(), Constants.EMAIL_BUSY);
 
             verify(userRepository, times(2)).findById(anyLong());
             verify(userRepository, times(1)).save(any(User.class));
@@ -112,7 +113,7 @@ class UserServiceImplTest {
         void updateIfUserNotFound() {
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> userService.update(1L, userDto1Id));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
 
             verify(userRepository, times(1)).findById(anyLong());
         }
@@ -123,9 +124,24 @@ class UserServiceImplTest {
             when(userRepository.save(any(User.class))).thenReturn(user1Id);
             UserDto updatedUser = userService.update(2L, userDto2Id);
 
-            Assertions.assertEquals(updatedUser.getId(), userDto2Id.getId());
-            Assertions.assertEquals(updatedUser.getName(), userDto2Id.getName());
-            Assertions.assertEquals(updatedUser.getEmail(), userDto2Id.getEmail());
+            assertEquals(updatedUser.getId(), userDto2Id.getId());
+            assertEquals(updatedUser.getName(), userDto2Id.getName());
+            assertEquals(updatedUser.getEmail(), userDto2Id.getEmail());
+
+            verify(userRepository, times(1)).findById(anyLong());
+            verify(userRepository, times(1)).save(any(User.class));
+        }
+
+        @Test
+        void updateUserIfUserDtoEmailEqualNull() {
+            userDto2Id.setEmail(null);
+            when(userRepository.findById(anyLong())).thenReturn(Optional.of(user1Id));
+            when(userRepository.save(any(User.class))).thenReturn(user1Id);
+            UserDto updatedUser = userService.update(2L, userDto2Id);
+
+            assertEquals(updatedUser.getId(), userDto2Id.getId());
+            assertEquals(updatedUser.getName(), userDto2Id.getName());
+            assertNotNull(updatedUser.getEmail());
 
             verify(userRepository, times(1)).findById(anyLong());
             verify(userRepository, times(1)).save(any(User.class));
@@ -140,9 +156,9 @@ class UserServiceImplTest {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(user1Id));
             UserDto userDto = userService.getUserById(user1Id.getId());
 
-            Assertions.assertEquals(userDto.getId(), user1Id.getId());
-            Assertions.assertEquals(userDto.getName(), user1Id.getName());
-            Assertions.assertEquals(userDto.getEmail(), user1Id.getEmail());
+            assertEquals(userDto.getId(), user1Id.getId());
+            assertEquals(userDto.getName(), user1Id.getName());
+            assertEquals(userDto.getEmail(), user1Id.getEmail());
 
             verify(userRepository, times(1)).findById(anyLong());
         }
@@ -151,7 +167,7 @@ class UserServiceImplTest {
         void getUserByWrongId() {
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> userService.getUserById(99L));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
 
             verify(userRepository, times(1)).findById(anyLong());
         }
@@ -168,9 +184,9 @@ class UserServiceImplTest {
             List<UserDto> users = userService.getAllUsers();
 
             assertFalse(users.isEmpty());
-            Assertions.assertEquals(users.get(0).getId(), user1Id.getId());
-            Assertions.assertEquals(users.get(0).getName(), user1Id.getName());
-            Assertions.assertEquals(users.get(0).getEmail(), user1Id.getEmail());
+            assertEquals(users.get(0).getId(), user1Id.getId());
+            assertEquals(users.get(0).getName(), user1Id.getName());
+            assertEquals(users.get(0).getEmail(), user1Id.getEmail());
         }
     }
 
@@ -185,7 +201,7 @@ class UserServiceImplTest {
 
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> userService.getUserById(user.getId()));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
 
             verify(userRepository, times(1)).deleteById(anyLong());
         }

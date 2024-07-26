@@ -1,4 +1,4 @@
-package ru.practicum.gateway.constant;
+package ru.practicum.gateway.constants;
 
 public class Constants {
     public static final String HEADER_USER_ID = "X-Sharer-User-Id";

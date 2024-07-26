@@ -1,14 +1,14 @@
 package ru.practicum.gateway.request.dto;
 
-import javax.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.experimental.Accessors;
 
-@Getter
-@Setter
+import javax.validation.constraints.NotNull;
+
+@Data
 @Accessors(chain = true)
 public class ItemRequestDto {
+
     @NotNull
     private String description;
 }

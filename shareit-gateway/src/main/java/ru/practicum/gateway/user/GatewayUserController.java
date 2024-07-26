@@ -21,6 +21,7 @@ import ru.practicum.gateway.user.dto.UserDto;
 @RequiredArgsConstructor
 @Validated
 public class GatewayUserController {
+
     @Autowired
     private final UserClient userClient;
 

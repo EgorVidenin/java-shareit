@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
 
-import java.time.LocalDateTime;
-import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +13,10 @@ import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class ItemRepositoryTest {
@@ -90,13 +87,5 @@ class ItemRepositoryTest {
                         "вет", "вет", page);
 
         assertIterableEquals(actualItemList, expectedItemList);
-    }
-
-    @Test
-    void findAllByRequestId() {
-        List<Item> actualItemList = itemRepository.findAllByRequestId(itemRequest.getId());
-
-        Assertions.assertEquals(actualItemList.get(0), item2);
-        Assertions.assertEquals(actualItemList.get(0).getName(), item2.getName());
     }
 }

@@ -1,10 +1,6 @@
 package ru.practicum.shareit.request.service;
 
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,8 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
-import ru.practicum.shareit.constant.Constants;
-import ru.practicum.shareit.error.NotFoundException;
+import ru.practicum.shareit.constants.Constants;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
@@ -23,14 +20,14 @@ import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RequestServiceImplTest {
@@ -77,9 +74,9 @@ class RequestServiceImplTest {
             ItemRequestDtoResponse itemRequestDtoResponse = requestService.saveRequest(requester.getId(), itemRequestDto);
 
             assertNotNull(itemRequestDtoResponse);
-            Assertions.assertEquals(itemRequestDtoResponse.getId(), itemRequest.getId());
-            Assertions.assertEquals(itemRequestDtoResponse.getDescription(), itemRequest.getDescription());
-            Assertions.assertEquals(itemRequestDtoResponse.getCreated(), itemRequest.getCreated());
+            assertEquals(itemRequestDtoResponse.getId(), itemRequest.getId());
+            assertEquals(itemRequestDtoResponse.getDescription(), itemRequest.getDescription());
+            assertEquals(itemRequestDtoResponse.getCreated(), itemRequest.getCreated());
 
             verify(requestRepository, times(1)).save(any(ItemRequest.class));
             verify(userRepository, times(1)).findById(anyLong());
@@ -89,7 +86,7 @@ class RequestServiceImplTest {
         void saveRequestWhenUserNotFound() {
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> requestService.saveRequest(requester.getId(), itemRequestDto));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
 
             verify(userRepository, times(1)).findById(anyLong());
         }
@@ -105,9 +102,9 @@ class RequestServiceImplTest {
             List<ItemRequestDtoResponse> requests = requestService.getAllByRequesterId(requester.getId());
 
             assertFalse(requests.isEmpty());
-            Assertions.assertEquals(requests.get(0).getId(), itemRequest.getId());
-            Assertions.assertEquals(requests.get(0).getCreated(), itemRequest.getCreated());
-            Assertions.assertEquals(requests.get(0).getDescription(), itemRequest.getDescription());
+            assertEquals(requests.get(0).getId(), itemRequest.getId());
+            assertEquals(requests.get(0).getCreated(), itemRequest.getCreated());
+            assertEquals(requests.get(0).getDescription(), itemRequest.getDescription());
 
             verify(requestRepository, times(1)).findAllByRequesterIdOrderByCreatedDesc(anyLong());
             verify(userRepository, times(1)).findById(anyLong());
@@ -117,7 +114,7 @@ class RequestServiceImplTest {
         void getAllByRequesterIdWhenUserNotFound() {
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> requestService.getAllByRequesterId(requester.getId()));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
 
             verify(userRepository, times(1)).findById(anyLong());
         }
@@ -129,12 +126,19 @@ class RequestServiceImplTest {
             List<ItemRequestDtoResponse> itemRequestDtoResponses = requestService.getAllRequests(2L, 0, 1);
 
             assertFalse(itemRequestDtoResponses.isEmpty());
-            Assertions.assertEquals(itemRequestDtoResponses.get(0).getId(), itemRequest.getId());
-            Assertions.assertEquals(itemRequestDtoResponses.get(0).getCreated(), itemRequest.getCreated());
-            Assertions.assertEquals(itemRequestDtoResponses.get(0).getDescription(), itemRequest.getDescription());
+            assertEquals(itemRequestDtoResponses.get(0).getId(), itemRequest.getId());
+            assertEquals(itemRequestDtoResponses.get(0).getCreated(), itemRequest.getCreated());
+            assertEquals(itemRequestDtoResponses.get(0).getDescription(), itemRequest.getDescription());
 
             verify(requestRepository, times(1)).findAllStrangerRequests(anyLong(), any(Pageable.class));
             verify(userRepository, times(1)).findById(anyLong());
+        }
+
+        @Test
+        void getAllRequestsWithWrongParams() {
+            BadRequestException exception =
+                    assertThrows(BadRequestException.class, () -> requestService.getAllRequests(2L, -1, 1));
+            assertEquals(exception.getMessage(), Constants.NEGATIVE_VALUE);
         }
     }
 
@@ -148,9 +152,9 @@ class RequestServiceImplTest {
             ItemRequestDtoResponse itemRequestDtoResponse = requestService.getRequestById(requester.getId(), itemRequest.getId());
 
             assertNotNull(itemRequestDtoResponse);
-            Assertions.assertEquals(itemRequestDtoResponse.getId(), itemRequest.getId());
-            Assertions.assertEquals(itemRequestDtoResponse.getCreated(), itemRequest.getCreated());
-            Assertions.assertEquals(itemRequestDtoResponse.getDescription(), itemRequest.getDescription());
+            assertEquals(itemRequestDtoResponse.getId(), itemRequest.getId());
+            assertEquals(itemRequestDtoResponse.getCreated(), itemRequest.getCreated());
+            assertEquals(itemRequestDtoResponse.getDescription(), itemRequest.getDescription());
 
             verify(requestRepository, times(1)).findById(anyLong());
             verify(userRepository, times(1)).findById(anyLong());
@@ -161,7 +165,7 @@ class RequestServiceImplTest {
         void getRequestByIdWhenRequesterNotFound() {
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> requestService.getRequestById(2L, 2L));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
 
             verify(userRepository, times(1)).findById(anyLong());
         }
@@ -171,7 +175,7 @@ class RequestServiceImplTest {
             when(userRepository.findById(anyLong())).thenReturn(Optional.of(requester));
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> requestService.getRequestById(2L, 2L));
-            Assertions.assertEquals(exception.getMessage(), Constants.REQUEST_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.REQUEST_NOT_FOUND);
 
             verify(requestRepository, times(1)).findById(anyLong());
         }

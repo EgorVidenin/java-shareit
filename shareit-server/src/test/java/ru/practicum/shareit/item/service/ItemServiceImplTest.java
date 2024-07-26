@@ -1,11 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,9 +12,9 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.constant.Constants;
-import ru.practicum.shareit.error.BadRequestException;
-import ru.practicum.shareit.error.NotFoundException;
+import ru.practicum.shareit.constants.Constants;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -31,14 +26,13 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -115,10 +109,10 @@ class ItemServiceImplTest {
             ItemDto actualItemDto = itemService.save(user.getId(), itemDto);
 
             assertNotNull(actualItemDto);
-            Assertions.assertEquals(actualItemDto.getId(), itemDto.getId());
-            Assertions.assertEquals(actualItemDto.getName(), itemDto.getName());
-            Assertions.assertEquals(actualItemDto.getDescription(), itemDto.getDescription());
-            Assertions.assertEquals(actualItemDto.getRequestId(), itemDto.getRequestId());
+            assertEquals(actualItemDto.getId(), itemDto.getId());
+            assertEquals(actualItemDto.getName(), itemDto.getName());
+            assertEquals(actualItemDto.getDescription(), itemDto.getDescription());
+            assertEquals(actualItemDto.getRequestId(), itemDto.getRequestId());
         }
 
         @Test
@@ -133,7 +127,7 @@ class ItemServiceImplTest {
         void saveItemIfNoUser() {
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> itemService.save(user.getId(), itemDto));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
         }
     }
 
@@ -148,9 +142,9 @@ class ItemServiceImplTest {
             ItemDto actualItemDto = itemService.update(owner.getId(), item.getId(), itemDto);
 
             assertNotNull(actualItemDto);
-            Assertions.assertEquals(actualItemDto.getId(), itemDto.getId());
-            Assertions.assertEquals(actualItemDto.getName(), itemDto.getName());
-            Assertions.assertEquals(actualItemDto.getDescription(), itemDto.getDescription());
+            assertEquals(actualItemDto.getId(), itemDto.getId());
+            assertEquals(actualItemDto.getName(), itemDto.getName());
+            assertEquals(actualItemDto.getDescription(), itemDto.getDescription());
         }
 
         @Test
@@ -162,16 +156,16 @@ class ItemServiceImplTest {
             ItemDto actualItemDto = itemService.update(owner.getId(), item.getId(), itemDto);
 
             assertNotNull(actualItemDto);
-            Assertions.assertEquals(actualItemDto.getId(), itemDto.getId());
-            Assertions.assertEquals(actualItemDto.getName(), item.getName());
-            Assertions.assertEquals(actualItemDto.getDescription(), itemDto.getDescription());
+            assertEquals(actualItemDto.getId(), itemDto.getId());
+            assertEquals(actualItemDto.getName(), item.getName());
+            assertEquals(actualItemDto.getDescription(), itemDto.getDescription());
         }
 
         @Test
         void updateItemIfItemNotFound() {
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> itemService.update(user.getId(), item.getId(), itemDto));
-            Assertions.assertEquals(exception.getMessage(), Constants.ITEM_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.ITEM_NOT_FOUND);
         }
 
         @Test
@@ -185,7 +179,7 @@ class ItemServiceImplTest {
             item.setOwner(owner);
             IllegalArgumentException exception =
                     assertThrows(IllegalArgumentException.class, () -> itemService.update(user.getId(), item.getId(), itemDto));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_OWNER);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_OWNER);
         }
     }
 
@@ -203,10 +197,10 @@ class ItemServiceImplTest {
             ItemDtoResponse actualItem = itemService.getItemById(user.getId(), item.getId());
 
             assertNotNull(actualItem);
-            Assertions.assertEquals(actualItem.getId(), itemDtoResponse.getId());
-            Assertions.assertEquals(actualItem.getName(), itemDtoResponse.getName());
-            Assertions.assertEquals(actualItem.getDescription(), itemDtoResponse.getDescription());
-            Assertions.assertTrue(actualItem.getComments().isEmpty());
+            assertEquals(actualItem.getId(), itemDtoResponse.getId());
+            assertEquals(actualItem.getName(), itemDtoResponse.getName());
+            assertEquals(actualItem.getDescription(), itemDtoResponse.getDescription());
+            assertTrue(actualItem.getComments().isEmpty());
             assertNull(actualItem.getLastBooking());
             assertNull(actualItem.getNextBooking());
         }
@@ -219,19 +213,19 @@ class ItemServiceImplTest {
             ItemDtoResponse actualItem = itemService.getItemById(owner.getId(), item.getId());
 
             assertNotNull(actualItem);
-            Assertions.assertEquals(actualItem.getId(), item.getId());
-            Assertions.assertEquals(actualItem.getName(), item.getName());
-            Assertions.assertEquals(actualItem.getDescription(), item.getDescription());
+            assertEquals(actualItem.getId(), item.getId());
+            assertEquals(actualItem.getName(), item.getName());
+            assertEquals(actualItem.getDescription(), item.getDescription());
 
-            Assertions.assertEquals(actualItem.getLastBooking(), itemMapper.bookingToBookingDto(booking1));
-            Assertions.assertEquals(actualItem.getNextBooking(), itemMapper.bookingToBookingDto(booking2));
+            assertEquals(actualItem.getLastBooking(), itemMapper.bookingToBookingDto(booking1));
+            assertEquals(actualItem.getNextBooking(), itemMapper.bookingToBookingDto(booking2));
         }
 
         @Test
         void getItemByIdWhenItemNotFound() {
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> itemService.getItemById(user.getId(), item.getId()));
-            Assertions.assertEquals(exception.getMessage(), Constants.ITEM_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.ITEM_NOT_FOUND);
         }
 
         @Test
@@ -241,7 +235,7 @@ class ItemServiceImplTest {
             ItemDtoResponse actualItem = itemService.getItemById(user.getId(), item.getId());
 
             assertNotNull(actualItem);
-            Assertions.assertEquals(actualItem.getId(), item.getId());
+            assertEquals(actualItem.getId(), item.getId());
             assertNull(actualItem.getComments());
         }
 
@@ -251,9 +245,9 @@ class ItemServiceImplTest {
             List<ItemDtoResponse> items = itemService.getAll(user.getId(), 0, 1);
 
             assertFalse(items.isEmpty());
-            Assertions.assertEquals(items.get(0).getId(), item.getId());
-            Assertions.assertEquals(items.get(0).getName(), item.getName());
-            Assertions.assertEquals(items.get(0).getDescription(), item.getDescription());
+            assertEquals(items.get(0).getId(), item.getId());
+            assertEquals(items.get(0).getName(), item.getName());
+            assertEquals(items.get(0).getDescription(), item.getDescription());
         }
 
         @Test
@@ -263,9 +257,9 @@ class ItemServiceImplTest {
             List<ItemDto> items = itemService.searchItems(user.getId(), "ружка", 0, 1);
 
             assertFalse(items.isEmpty());
-            Assertions.assertEquals(items.get(0).getId(), item.getId());
-            Assertions.assertEquals(items.get(0).getName(), item.getName());
-            Assertions.assertEquals(items.get(0).getDescription(), item.getDescription());
+            assertEquals(items.get(0).getId(), item.getId());
+            assertEquals(items.get(0).getName(), item.getName());
+            assertEquals(items.get(0).getDescription(), item.getDescription());
         }
 
         @Test
@@ -290,7 +284,7 @@ class ItemServiceImplTest {
 
             BadRequestException exception =
                     assertThrows(BadRequestException.class, () -> itemService.addComment(1L, 1L, commentDto));
-            Assertions.assertEquals(exception.getMessage(), Constants.NO_COMMENT);
+            assertEquals(exception.getMessage(), Constants.NO_COMMENT);
         }
 
         @Test
@@ -300,7 +294,7 @@ class ItemServiceImplTest {
 
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> itemService.addComment(1L, 1L, commentDto));
-            Assertions.assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.USER_NOT_FOUND);
         }
 
         @Test
@@ -309,7 +303,7 @@ class ItemServiceImplTest {
 
             NotFoundException exception =
                     assertThrows(NotFoundException.class, () -> itemService.addComment(1L, 1L, commentDto));
-            Assertions.assertEquals(exception.getMessage(), Constants.ITEM_NOT_FOUND);
+            assertEquals(exception.getMessage(), Constants.ITEM_NOT_FOUND);
         }
 
         @Test
@@ -329,10 +323,10 @@ class ItemServiceImplTest {
             CommentDtoResponse commentDtoResponse = itemService.addComment(user.getId(), item.getId(), commentDto);
 
             assertNotNull(commentDtoResponse);
-            Assertions.assertEquals(commentDtoResponse.getId(), comment.getId());
-            Assertions.assertEquals(commentDtoResponse.getCreated(), comment.getCreated());
-            Assertions.assertEquals(commentDtoResponse.getText(), comment.getText());
-            Assertions.assertEquals(commentDtoResponse.getAuthorName(), comment.getAuthor().getName());
+            assertEquals(commentDtoResponse.getId(), comment.getId());
+            assertEquals(commentDtoResponse.getCreated(), comment.getCreated());
+            assertEquals(commentDtoResponse.getText(), comment.getText());
+            assertEquals(commentDtoResponse.getAuthorName(), comment.getAuthor().getName());
         }
     }
 }

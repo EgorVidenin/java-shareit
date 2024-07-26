@@ -1,7 +1,5 @@
 package ru.practicum.shareit.request.controller;
 
-
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +10,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.constant.Constants;
+import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.service.RequestService;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -26,7 +29,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDtoResponse saveRequest(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                              @RequestBody ItemRequestDto itemRequestDto) {
+                                              @RequestBody @Valid ItemRequestDto itemRequestDto) {
         log.info("Post-запрос saveRequest");
         return requestService.saveRequest(userId, itemRequestDto);
     }
@@ -39,8 +42,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDtoResponse> getAllRequests(@RequestHeader(Constants.HEADER_USER_ID) Long userId,
-                                                       @RequestParam Integer from,
-                                                       @RequestParam Integer size) {
+                                                       @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                       @Positive @RequestParam(defaultValue = "10", required = false) Integer size) {
         log.info("Get-запрос getAllRequests");
         return requestService.getAllRequests(userId, from, size);
     }

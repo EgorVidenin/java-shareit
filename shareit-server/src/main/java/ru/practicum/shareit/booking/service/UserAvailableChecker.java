@@ -2,13 +2,14 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.constant.Constants;
-import ru.practicum.shareit.error.NotFoundException;
+import ru.practicum.shareit.constants.Constants;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 @Component
 @RequiredArgsConstructor
 public class UserAvailableChecker extends EntryAccessor {
+
     private final UserRepository userRepository;
 
     @Override

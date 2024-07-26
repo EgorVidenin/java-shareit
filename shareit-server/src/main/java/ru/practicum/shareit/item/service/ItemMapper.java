@@ -1,8 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 
-import java.time.LocalDateTime;
-import java.util.List;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,6 +15,9 @@ import ru.practicum.shareit.item.dto.ItemDtoResponse;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
