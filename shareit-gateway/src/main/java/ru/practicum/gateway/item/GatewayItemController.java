@@ -61,14 +61,14 @@ public class GatewayItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchItems(@RequestHeader("X-Sharer-User-Id") long userId,
-                                              @RequestParam(required = false) String text,
+                                              @RequestParam String text,
                                               @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                               @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        if (text.isBlank()) {
+        if (text == null || text.isBlank()) {
             log.info("Параметр 'text' пустой. Получен пустой список Item");
-            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+            return ResponseEntity.ok(Collections.emptyList());
         }
-        return itemClient.searchItems(userId, text, from, size);
+        return ResponseEntity.ok(itemClient.searchItems(userId, text, from, size));
     }
 
     @PostMapping("/{itemId}/comment")

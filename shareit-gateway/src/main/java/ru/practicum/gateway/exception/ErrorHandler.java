@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.gateway.constants.Constants;
 
-
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
@@ -40,5 +39,12 @@ public class ErrorHandler {
     public ErrorResponse badRequestHandle(final BadRequestException exception) {
         log.error("400 {}", exception.getMessage(), exception);
         return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAllUncaughtExceptions(final Throwable exception) {
+        log.error("500 {}", exception.getMessage(), exception);
+        return new ErrorResponse("Internal Server Error");
     }
 }
