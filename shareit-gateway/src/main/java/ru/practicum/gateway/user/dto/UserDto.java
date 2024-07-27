@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Accessors(chain = true)
@@ -12,10 +12,10 @@ public class UserDto {
 
     private Long id;
 
-    @NotBlank(groups = CreateUser.class)
+    @NotNull(groups = NewUser.class)
     private String name;
 
-    @Email(groups = {CreateUser.class, UpdateUser.class})
-    @NotBlank(groups = {CreateUser.class, UpdateUser.class})
+    @Email(groups = {NewUser.class, UpdateUser.class})
+    @NotNull(groups = NewUser.class)
     private String email;
 }

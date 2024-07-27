@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.practicum.gateway.user.dto.CreateUser;
+import ru.practicum.gateway.user.dto.NewUser;
 import ru.practicum.gateway.user.dto.UpdateUser;
 import ru.practicum.gateway.user.dto.UserDto;
 
@@ -26,7 +26,7 @@ public class GatewayUserController {
     private final UserClient userClient;
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@Validated(CreateUser.class)
+    public ResponseEntity<Object> createUser(@Validated(NewUser.class)
                                              @RequestBody UserDto userDto) {
         return userClient.createUser(userDto);
     }
