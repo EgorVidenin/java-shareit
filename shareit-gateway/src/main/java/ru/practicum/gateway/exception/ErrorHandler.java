@@ -9,36 +9,29 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.gateway.constants.Constants;
 
-
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleUnsupportedStatus(final IllegalArgumentException exception) {
         log.error("500 {}", Constants.UNSUPPORTED_STATUS, exception);
         return new ErrorResponse(exception.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class, BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse validationHandle(final MethodArgumentNotValidException exception) {
+    public ErrorResponse handleBadRequestExceptions(final Exception exception) {
         log.error("400 {}", exception.getMessage(), exception);
         return new ErrorResponse(exception.getMessage());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse validationHandle(final ConstraintViolationException exception) {
-        log.error("400 {}", exception.getMessage(), exception);
-        return new ErrorResponse(exception.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse badRequestHandle(final BadRequestException exception) {
-        log.error("400 {}", exception.getMessage(), exception);
-        return new ErrorResponse(exception.getMessage());
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAllOtherExceptions(final Throwable exception) {
+        log.error("500 {}", exception.getMessage(), exception);
+        return new ErrorResponse("An unexpected error occurred.");
     }
 }
+
